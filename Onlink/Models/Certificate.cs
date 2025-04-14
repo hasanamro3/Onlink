@@ -6,7 +6,6 @@ namespace Onlink.Models
     {
         public int CertificateId { get; set; }
 
-        [Required(ErrorMessage = "Certificate Name is required")]
         public string Name { get; set; }
 
         public string? Issuer { get; set; }

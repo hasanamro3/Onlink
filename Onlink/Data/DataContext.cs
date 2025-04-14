@@ -13,7 +13,7 @@ namespace Onlink.Data
             : base(options)
         {
         }
-
+        public DbSet<Onlink.Models.Certificate> Certificate { get; set; } = default!;
         public DbSet<Onlink.Models.Employee> Employee { get; set; } = default!;
         public DbSet<Onlink.Models.CheckInfo> CheckInfo { get; set; } = default!;
         public DbSet<Onlink.Models.Job> Job { get; set; } = default!;
