@@ -21,7 +21,5 @@
         public int EmployeeId { get; set; }
         public int EmployerId { get; set; }
         public Employee? Employee { get; set; }
-
-        public IEnumerable<Certificate>? Certificates { get; set; }
     }
 }

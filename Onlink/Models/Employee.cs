@@ -36,7 +36,7 @@ namespace Onlink.Models
 
         public IEnumerable<Resume>? Resume { get; set; }
 
-        public string? Certificates { get; set; }
+        //public string? Certificates { get; set; }
 
         [DataType(DataType.MultilineText)]
         public string? Bio { get; set; }
