@@ -31,5 +31,7 @@ namespace Onlink.Models
 
         public IEnumerable<Job>? Jobs { get; set; }
         public IEnumerable<Resume>? Resume { get; set; }
+        public IEnumerable<Certificate>? Certificates { get; set; }
+
     }
 }

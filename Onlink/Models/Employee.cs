@@ -42,5 +42,8 @@ namespace Onlink.Models
         public string? Bio { get; set; }
         public CheckInfo? CheckInfo { get; set; }
         public IEnumerable<JobApplication>? EmpJob { get; set; }
+
+        public IEnumerable<Certificate>? Certificates { get; set; }
+
     }
 }
