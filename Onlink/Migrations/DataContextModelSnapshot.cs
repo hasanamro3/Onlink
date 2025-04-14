@@ -98,9 +98,6 @@ namespace Onlink.Migrations
                     b.Property<string>("Bio")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Certificates")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -342,7 +339,7 @@ namespace Onlink.Migrations
             modelBuilder.Entity("Onlink.Models.Certificate", b =>
                 {
                     b.HasOne("Onlink.Models.Employee", "Employee")
-                        .WithMany("Certificate")
+                        .WithMany("Certificates")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -407,7 +404,7 @@ namespace Onlink.Migrations
 
             modelBuilder.Entity("Onlink.Models.Employee", b =>
                 {
-                    b.Navigation("Certificate");
+                    b.Navigation("Certificates");
 
                     b.Navigation("CheckInfo");
 

@@ -12,8 +12,8 @@ using Onlink.Data;
 namespace Onlink.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250414150406_m2")]
-    partial class m2
+    [Migration("20250414152640_m1")]
+    partial class m1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -64,14 +64,9 @@ namespace Onlink.Migrations
                     b.Property<string>("PathLink")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ResumeId")
-                        .HasColumnType("int");
-
                     b.HasKey("CertificateId");
 
                     b.HasIndex("EmployeeId");
-
-                    b.HasIndex("ResumeId");
 
                     b.ToTable("Certificate");
                 });
@@ -104,9 +99,6 @@ namespace Onlink.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeeId"));
 
                     b.Property<string>("Bio")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Certificates")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -350,20 +342,12 @@ namespace Onlink.Migrations
             modelBuilder.Entity("Onlink.Models.Certificate", b =>
                 {
                     b.HasOne("Onlink.Models.Employee", "Employee")
-                        .WithMany("Certificate")
+                        .WithMany("Certificates")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Onlink.Models.Resume", "Resume")
-                        .WithMany("Certificates")
-                        .HasForeignKey("ResumeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Employee");
-
-                    b.Navigation("Resume");
                 });
 
             modelBuilder.Entity("Onlink.Models.CheckInfo", b =>
@@ -423,7 +407,7 @@ namespace Onlink.Migrations
 
             modelBuilder.Entity("Onlink.Models.Employee", b =>
                 {
-                    b.Navigation("Certificate");
+                    b.Navigation("Certificates");
 
                     b.Navigation("CheckInfo");
 
@@ -445,11 +429,6 @@ namespace Onlink.Migrations
             modelBuilder.Entity("Onlink.Models.Post", b =>
                 {
                     b.Navigation("RelatedActivities");
-                });
-
-            modelBuilder.Entity("Onlink.Models.Resume", b =>
-                {
-                    b.Navigation("Certificates");
                 });
 #pragma warning restore 612, 618
         }
