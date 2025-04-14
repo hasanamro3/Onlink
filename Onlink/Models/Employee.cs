@@ -35,12 +35,14 @@ namespace Onlink.Models
         public string? PhoneNumber { get; set; }
 
         public IEnumerable<Resume>? Resume { get; set; }
-
-        public string? Certificates { get; set; }
+        public IEnumerable<Certificate>? Certificates { get; set; }
+      
 
         [DataType(DataType.MultilineText)]
         public string? Bio { get; set; }
         public CheckInfo? CheckInfo { get; set; }
         public IEnumerable<JobApplication>? EmpJob { get; set; }
+
+        
     }
 }
