@@ -23,6 +23,8 @@ namespace Onlink.Data
         public DbSet<Onlink.Models.Resume> Resume { get; set; } = default!;
         public DbSet<Onlink.Models.Certificate> Certificate { get; set; } = default!;
         public DbSet<Onlink.Models.EmployeeJob> EmployeeJob { get; set; } = default!;
+        public DbSet<Onlink.Models.Login> Login { get; set; } = default!;
+        public DbSet<Onlink.Models.Search> Search { get; set; } = default!;
      
     }
 }
