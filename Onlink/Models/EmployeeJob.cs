@@ -3,10 +3,17 @@
     public class EmployeeJob
     {
         public int EmployeeJobId { get; set; }
+
+        // Foreign keys
         public int EmployeeId { get; set; }
         public int JobApplicationId { get; set; }
-        public Employee? Employee { get; set; }
-        public JobApplication? JobApplication { get; set; }
 
+        // Additional join table properties
+        public DateTime AppliedDate { get; set; } = DateTime.UtcNow;
+        public string? CoverLetter { get; set; }
+
+        // Navigation properties
+        public Employee? Employee { get; set; } = null!;
+        public JobApplication? JobApplication { get; set; } = null!;
     }
 }

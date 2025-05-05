@@ -21,7 +21,7 @@ namespace Onlink.Models
 
 
 
-        public int EmployeeId { get; set; }
+        public int EmployerId { get; set; }
 
         public JobApplication? JobApplication { get; set; }
         public Employer? Employer { get; set; }

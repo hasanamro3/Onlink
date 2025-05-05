@@ -14,16 +14,7 @@ namespace Onlink.Models
         [Required(ErrorMessage = "Email Is Required")]
         public string Email { get; set; }
 
-        [DataType(DataType.Password)]
-        [Required(ErrorMessage = "Password Not Valid!")]
-        [StringLength(30, MinimumLength = 8, ErrorMessage = "Password Min 8 Chars")]
-        public string Password { get; set; }
-
-        [Compare(nameof(Password), ErrorMessage = "Password Not Valid!")]
-        [StringLength(30, MinimumLength = 8, ErrorMessage = "Password Min 8 Chars")]
-        [DataType(DataType.Password)]
-        [Required(ErrorMessage = "Password Not Valid!")]
-        public string PasswordConfirmation { get; set; }
+        
 
         [StringLength(15, MinimumLength = 10, ErrorMessage = "Phone Not Valid")]
         [Phone]
@@ -31,5 +22,7 @@ namespace Onlink.Models
 
         public IEnumerable<Job>? Jobs { get; set; }
         public IEnumerable<Resume>? Resume { get; set; }
+        public int UserId { get; set; }
+        public User? User { get; set; }
     }
 }

@@ -12,6 +12,55 @@ namespace Onlink.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "LoginViewModel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RememberMe = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LoginViewModel", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RegisterViewModel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Username = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    UserType = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RegisterViewModel", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserType = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ProfilePicturePath = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.UserId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Employee",
                 columns: table => new
                 {
@@ -20,14 +69,18 @@ namespace Onlink.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(24)", maxLength: 24, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(24)", maxLength: 24, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    PasswordConfirmation = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: true),
-                    Bio = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Bio = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Employee", x => x.EmployeeId);
+                    table.ForeignKey(
+                        name: "FK_Employee_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateTable(
@@ -40,39 +93,17 @@ namespace Onlink.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     PasswordConfirmation = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: true)
+                    PhoneNumber = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Employer", x => x.EmployerId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Post",
-                columns: table => new
-                {
-                    PostId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    EmployeeId = table.Column<int>(type: "int", nullable: false),
-                    EmployerId = table.Column<int>(type: "int", nullable: false),
-                    ActivityType = table.Column<int>(type: "int", nullable: false),
-                    MediaUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MediaType = table.Column<int>(type: "int", nullable: false),
-                    Privacy = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LikeCount = table.Column<int>(type: "int", nullable: false),
-                    CommentCount = table.Column<int>(type: "int", nullable: false),
-                    ShareCount = table.Column<int>(type: "int", nullable: false),
-                    PostId1 = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Post", x => x.PostId);
                     table.ForeignKey(
-                        name: "FK_Post_Post_PostId1",
-                        column: x => x.PostId1,
-                        principalTable: "Post",
-                        principalColumn: "PostId");
+                        name: "FK_Employer_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateTable(
@@ -95,8 +126,7 @@ namespace Onlink.Migrations
                         name: "FK_Certificate_Employee_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employee",
-                        principalColumn: "EmployeeId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "EmployeeId");
                 });
 
             migrationBuilder.CreateTable(
@@ -114,8 +144,7 @@ namespace Onlink.Migrations
                         name: "FK_CheckInfo_Employee_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employee",
-                        principalColumn: "EmployeeId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "EmployeeId");
                 });
 
             migrationBuilder.CreateTable(
@@ -128,8 +157,7 @@ namespace Onlink.Migrations
                     JobDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     JobSalary = table.Column<double>(type: "float", nullable: false),
                     SubmitSessionDueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EmployeeId = table.Column<int>(type: "int", nullable: false),
-                    EmployerId = table.Column<int>(type: "int", nullable: true)
+                    EmployerId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -139,6 +167,44 @@ namespace Onlink.Migrations
                         column: x => x.EmployerId,
                         principalTable: "Employer",
                         principalColumn: "EmployerId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Post",
+                columns: table => new
+                {
+                    PostId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false),
+                    EmployerId = table.Column<int>(type: "int", nullable: false),
+                    ActivityType = table.Column<int>(type: "int", nullable: false),
+                    MediaUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MediaType = table.Column<int>(type: "int", nullable: false),
+                    Privacy = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LikeCount = table.Column<int>(type: "int", nullable: false),
+                    CommentCount = table.Column<int>(type: "int", nullable: false),
+                    ShareCount = table.Column<int>(type: "int", nullable: false),
+                    ParentPostId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Post", x => x.PostId);
+                    table.ForeignKey(
+                        name: "FK_Post_Employee_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employee",
+                        principalColumn: "EmployeeId");
+                    table.ForeignKey(
+                        name: "FK_Post_Employer_EmployerId",
+                        column: x => x.EmployerId,
+                        principalTable: "Employer",
+                        principalColumn: "EmployerId");
+                    table.ForeignKey(
+                        name: "FK_Post_Post_ParentPostId",
+                        column: x => x.ParentPostId,
+                        principalTable: "Post",
+                        principalColumn: "PostId");
                 });
 
             migrationBuilder.CreateTable(
@@ -154,9 +220,9 @@ namespace Onlink.Migrations
                     Education = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Experience = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Skills = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EmployeeId = table.Column<int>(type: "int", nullable: false),
-                    EmployerId = table.Column<int>(type: "int", nullable: false),
-                    LinkPath = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    LinkPath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EmployeeId = table.Column<int>(type: "int", nullable: true),
+                    EmployerId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -165,14 +231,12 @@ namespace Onlink.Migrations
                         name: "FK_Resume_Employee_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employee",
-                        principalColumn: "EmployeeId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "EmployeeId");
                     table.ForeignKey(
                         name: "FK_Resume_Employer_EmployerId",
                         column: x => x.EmployerId,
                         principalTable: "Employer",
-                        principalColumn: "EmployerId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "EmployerId");
                 });
 
             migrationBuilder.CreateTable(
@@ -181,7 +245,9 @@ namespace Onlink.Migrations
                 {
                     JobApplicationId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    JobId = table.Column<int>(type: "int", nullable: false)
+                    JobId = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ApplicationDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -190,32 +256,33 @@ namespace Onlink.Migrations
                         name: "FK_JobApplication_Job_JobId",
                         column: x => x.JobId,
                         principalTable: "Job",
-                        principalColumn: "JobId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "JobId");
                 });
 
             migrationBuilder.CreateTable(
-                name: "EmployeeJobApplication",
+                name: "EmployeeJob",
                 columns: table => new
                 {
-                    EmpJobEmployeeId = table.Column<int>(type: "int", nullable: false),
-                    EmpJobJobApplicationId = table.Column<int>(type: "int", nullable: false)
+                    EmployeeJobId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false),
+                    JobApplicationId = table.Column<int>(type: "int", nullable: false),
+                    AppliedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CoverLetter = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EmployeeJobApplication", x => new { x.EmpJobEmployeeId, x.EmpJobJobApplicationId });
+                    table.PrimaryKey("PK_EmployeeJob", x => x.EmployeeJobId);
                     table.ForeignKey(
-                        name: "FK_EmployeeJobApplication_Employee_EmpJobEmployeeId",
-                        column: x => x.EmpJobEmployeeId,
+                        name: "FK_EmployeeJob_Employee_EmployeeId",
+                        column: x => x.EmployeeId,
                         principalTable: "Employee",
-                        principalColumn: "EmployeeId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "EmployeeId");
                     table.ForeignKey(
-                        name: "FK_EmployeeJobApplication_JobApplication_EmpJobJobApplicationId",
-                        column: x => x.EmpJobJobApplicationId,
+                        name: "FK_EmployeeJob_JobApplication_JobApplicationId",
+                        column: x => x.JobApplicationId,
                         principalTable: "JobApplication",
-                        principalColumn: "JobApplicationId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "JobApplicationId");
                 });
 
             migrationBuilder.CreateIndex(
@@ -230,9 +297,26 @@ namespace Onlink.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmployeeJobApplication_EmpJobJobApplicationId",
-                table: "EmployeeJobApplication",
-                column: "EmpJobJobApplicationId");
+                name: "IX_Employee_UserId",
+                table: "Employee",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeJob_EmployeeId",
+                table: "EmployeeJob",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeJob_JobApplicationId",
+                table: "EmployeeJob",
+                column: "JobApplicationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employer_UserId",
+                table: "Employer",
+                column: "UserId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Job_EmployerId",
@@ -246,9 +330,19 @@ namespace Onlink.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Post_PostId1",
+                name: "IX_Post_EmployeeId",
                 table: "Post",
-                column: "PostId1");
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Post_EmployerId",
+                table: "Post",
+                column: "EmployerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Post_ParentPostId",
+                table: "Post",
+                column: "ParentPostId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Resume_EmployeeId",
@@ -271,10 +365,16 @@ namespace Onlink.Migrations
                 name: "CheckInfo");
 
             migrationBuilder.DropTable(
-                name: "EmployeeJobApplication");
+                name: "EmployeeJob");
+
+            migrationBuilder.DropTable(
+                name: "LoginViewModel");
 
             migrationBuilder.DropTable(
                 name: "Post");
+
+            migrationBuilder.DropTable(
+                name: "RegisterViewModel");
 
             migrationBuilder.DropTable(
                 name: "Resume");
@@ -290,6 +390,9 @@ namespace Onlink.Migrations
 
             migrationBuilder.DropTable(
                 name: "Employer");
+
+            migrationBuilder.DropTable(
+                name: "Users");
         }
     }
 }

@@ -1,0 +1,687 @@
+﻿@model Onlink.Models.User
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Full explicit path
+    var userType = ViewData["UserType"]?.ToString();
+}
+
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Onlink</title>
+    <link rel="stylesheet" href="~/css/site.css">
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="apple-touch-icon" sizes="57x57" href="/uploads/logo2.jpg" style="border-radius:30px">
+
+    <style>
+        :root {
+            --primary-color: #047123;
+            --primary-dark: #035a1c;
+            --primary-light: rgba(4, 113, 35, 0.1);
+            --glass-blur: 16px;
+            --glass-opacity: 0.22;
+            --text-dark: #2d3748;
+            --text-muted: #6c757d;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* Glassmorphism Container */
+        .profile-card {
+            background: rgba(255, 255, 255, var(--glass-opacity));
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 880px;
+            overflow: hidden;
+            transition: var(--transition);
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+        }
+
+            .profile-card:hover {
+                box-shadow: 0 15px 30px rgba(31, 38, 135, 0.2);
+                transform: translateY(-2px);
+            }
+
+        /* Profile Sidebar */
+        .profile-sidebar {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 3rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .avatar-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-avatar {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+
+        .avatar-edit {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: var(--primary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: var(--transition);
+            border: 2px solid white;
+        }
+
+        .avatar-container:hover .avatar-edit {
+            opacity: 1;
+            transform: translateY(-5px);
+        }
+
+        .avatar-container:hover .profile-avatar {
+            transform: scale(1.03);
+        }
+
+        .username {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            color: var(--text-dark);
+        }
+
+        .user-type {
+            display: inline-block;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+            .social-link:hover {
+                background: var(--primary-color);
+                color: white;
+                transform: translateY(-3px);
+            }
+
+        /* Profile Content */
+        .profile-content {
+            padding: 3rem 2.5rem;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(4, 113, 35, 0.1);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-item {
+            background: rgba(255, 255, 255, 0.4);
+            padding: 1.25rem;
+            border-radius: 12px;
+            transition: var(--transition);
+        }
+
+            .info-item:hover {
+                background: rgba(255, 255, 255, 0.6);
+                transform: translateY(-2px);
+                box-shadow: var(--shadow-sm);
+            }
+
+        .info-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.875rem;
+            border-radius: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            color: white;
+        }
+
+            .btn-primary:hover {
+                background: var(--primary-dark);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(4, 113, 35, 0.3);
+            }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+            .btn-outline:hover {
+                background: var(--primary-light);
+                transform: translateY(-2px);
+            }
+
+        .btn-danger {
+            background: #e74a3b;
+            color: white;
+            border: none;
+        }
+
+            .btn-danger:hover {
+                background: #c0392b;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(231, 74, 59, 0.3);
+            }
+
+        /* Responsive Design */
+        @@media (max-width: 768px) {
+            .profile-card {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-sidebar {
+                padding: 2rem 1.5rem;
+            }
+
+            .profile-content {
+                padding: 2rem 1.5rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+
+        /* Animations */
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-card animate-in">
+        <!-- Profile Sidebar -->
+        <div class="profile-sidebar">
+            <div class="avatar-container">
+                <img src="@(!string.IsNullOrEmpty(Model.ProfilePicturePath) ? Url.Content(Model.ProfilePicturePath) : Url.Content("~/images/default-user.png"))"
+                     class="profile-avatar"
+                     alt="Profile Picture" id="avatarPreview" />
+                <div class="avatar-edit" title="Change Photo" id="avatarEditButton">
+                    <i class="fas fa-camera"></i>
+                </div>
+                <input type="file" id="avatarUpload" name="ProfilePictureFile" accept=".png,.jpg,.jpeg" style="display: none;" />
+            </div>
+            
+            <h1 class="username delay-1">@Model.UserName</h1>
+            <div class="user-type delay-1">@Model.UserType</div>
+
+            <div class="social-links delay-2">
+                <a href="#" class="social-link" title="LinkedIn">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="#" class="social-link" title="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" class="social-link" title="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+            </div>
+
+            <div class="mt-auto w-100 delay-3">
+                <a href="#" class="btn btn-outline">
+                    <i class="fas fa-share-alt me-1"></i> Share Profile
+                </a>
+            </div>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="profile-content">
+            <h2 class="section-title delay-1">Personal Information</h2>
+
+            <div class="info-grid">
+                <div class="info-item delay-1">
+                    <div class="info-label">
+                        <i class="fas fa-envelope"></i> Email
+                    </div>
+                    <div class="info-value">@Model.Email</div>
+                </div>
+
+                <div class="info-item delay-1">
+                    <div class="info-label">
+                        <i class="fas fa-calendar-alt"></i> Member Since
+                    </div>
+                    <div class="info-value">@Model.CreatedAt.ToString("MMMM dd, yyyy")</div>
+                </div>
+
+                @if (Model.UserType == "Employee" && Model.Employee != null)
+                {
+                    <div class="info-item delay-2">
+                        <div class="info-label">
+                            <i class="fas fa-user"></i> Full Name
+                        </div>
+                        <div class="info-value">@Model.Employee.FirstName</div>
+                    </div>
+
+                    <div class="info-item delay-2">
+                        <div class="info-label">
+                            <i class="fas fa-id-card"></i> Employee ID
+                        </div>
+                        <div class="info-value">EMP-@Model.Employee.UserId.ToString("D5")</div>
+                    </div>
+                }
+                else if (Model.UserType == "Employer" && Model.Employer != null)
+                {
+                    <div class="info-item delay-2">
+                        <div class="info-label">
+                            <i class="fas fa-briefcase"></i> Employer Name
+                        </div>
+                        <div class="info-value">@Model.Employer.Name</div>
+                    </div>
+
+                    <div class="info-item delay-2">
+                        <div class="info-label">
+                            <i class="fas fa-building"></i> Company
+                        </div>
+                        <div class="info-value">@Model.Employer.Name</div>
+                    </div>
+                }
+                
+
+                
+            </div>
+
+            <h2 class="section-title delay-2">Account Actions</h2>
+
+            <div class="action-buttons delay-3">
+               
+                <a asp-controller="Accounts" asp-action="Edit" class="btn-glass-edit-green">
+                    <i class="fas fa-user-edit me-2"></i>
+                    <span class="btn-text">Edit Profile</span>
+                </a>
+                <form asp-action="Logout" method="post" class="d-flex">
+                    <button type="submit" class="btn-glass-edit-light">
+                        <i class="fas fa-sign-out-alt me-2"></i>
+                        <span class="btn-text">Sign Out</span>
+                    </button>
+                    <style>
+                        .action-buttons {
+                            display: flex;
+                            justify-content: center;
+                            gap: 1.2rem; /* Space between buttons */
+                            flex-wrap: wrap;
+                        }
+
+                            .action-buttons .action-btn {
+                                min-width: 180px;
+                                text-align: center;
+                            }
+
+                        .btn-glass-edit-green {
+                            /* Glass effect */
+                            background: rgba(4, 113, 35, 0.15);
+                            backdrop-filter: blur(10px);
+                            -webkit-backdrop-filter: blur(10px);
+                            /* Border and shape */
+                            border: 1px solid rgba(4, 113, 35, 0.4);
+                            border-radius: 12px;
+                            padding: 0.8rem 1.8rem;
+                            /* Text and icon */
+                            color: #047123;
+                            font-weight: 600;
+                            letter-spacing: 0.5px;
+                            font-size: 0.9rem;
+                            text-transform: uppercase;
+                            /* Effects */
+                            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+                            transition: all 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+                            position: relative;
+                            overflow: hidden;
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+
+                            .btn-glass-edit-green:hover {
+                                background: rgba(4, 113, 35, 0.25);
+                                border-color: rgba(4, 113, 35, 0.7);
+                                color: #035a1c;
+                                transform: translateY(-2px);
+                                box-shadow: 0 6px 20px rgba(4, 113, 35, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+                            }
+
+                            .btn-glass-edit-green:active {
+                                transform: translateY(0);
+                                background: rgba(4, 113, 35, 0.35);
+                            }
+
+                            /* Subtle inner glow */
+                            .btn-glass-edit-green::after {
+                                content: '';
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                right: 0;
+                                bottom: 0;
+                                background: radial-gradient(circle at center, rgba(4, 113, 35, 0.2) 0%, transparent 70%);
+                                opacity: 0;
+                                transition: opacity 0.4s ease;
+                            }
+
+                            .btn-glass-edit-green:hover::after {
+                                opacity: 1;
+                            }
+
+                            /* Icon animation */
+                            .btn-glass-edit-green i {
+                                transition: all 0.4s ease;
+                                filter: drop-shadow(0 0 4px rgba(4, 113, 35, 0.3));
+                            }
+
+                            .btn-glass-edit-green:hover i {
+                                transform: scale(1.1);
+                                filter: drop-shadow(0 0 6px rgba(4, 113, 35, 0.5));
+                            }
+
+                            /* Text animation */
+                            .btn-glass-edit-green .btn-text {
+                                transition: all 0.4s ease;
+                                display: inline-block;
+                            }
+
+                            .btn-glass-edit-green:hover .btn-text {
+                                letter-spacing: 0.8px;
+                            }
+
+                            /* Focus state */
+                            .btn-glass-edit-green:focus {
+                                outline: none;
+                                box-shadow: 0 0 0 3px rgba(4, 113, 35, 0.2), 0 4px 15px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+                            }
+                    </style>
+                    <style>
+                        .btn-glass-edit-light {
+                            /* Light glass effect */
+                            background: rgba(255, 255, 255, 0.7);
+                            backdrop-filter: blur(12px);
+                            -webkit-backdrop-filter: blur(12px);
+                            /* Border and shape */
+                            border: 1px solid rgba(4, 113, 35, 0.4);
+                            border-radius: 12px;
+                            padding: 0.8rem 1.8rem;
+                            /* Text and icon */
+                            color: #047123;
+                            font-weight: 600;
+                            letter-spacing: 0.5px;
+                            font-size: 0.9rem;
+                            text-transform: uppercase;
+                            /* Effects */
+                            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+                            transition: all 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+                            position: relative;
+                            overflow: hidden;
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+
+                            .btn-glass-edit-light:hover {
+                                background: rgba(255, 255, 255, 0.8);
+                                border-color: rgba(4, 113, 35, 0.7);
+                                color: #035a1c;
+                                transform: translateY(-2px);
+                                box-shadow: 0 6px 20px rgba(4, 113, 35, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+                            }
+
+                            .btn-glass-edit-light:active {
+                                transform: translateY(0);
+                                background: rgba(255, 255, 255, 0.6);
+                            }
+
+                            /* Pulsing glow effect */
+                            .btn-glass-edit-light::before {
+                                content: '';
+                                position: absolute;
+                                top: -50%;
+                                left: -50%;
+                                width: 200%;
+                                height: 200%;
+                                background: radial-gradient(circle, rgba(4, 113, 35, 0.1) 0%, transparent 70%);
+                                opacity: 0;
+                                transition: opacity 0.6s ease;
+                            }
+
+                            .btn-glass-edit-light:hover::before {
+                                opacity: 1;
+                                animation: pulse 2s infinite;
+                            }
+
+                        @@keyframes pulse {
+                            0% {
+                                transform: scale(0.95);
+                                opacity: 0.8;
+                            }
+
+                            50% {
+                                transform: scale(1.05);
+                                opacity: 0.4;
+                            }
+
+                            100% {
+                                transform: scale(0.95);
+                                opacity: 0.8;
+                            }
+                        }
+
+                        /* Icon animation */
+                        .btn-glass-edit-light i {
+                            transition: all 0.4s ease;
+                            filter: drop-shadow(0 0 4px rgba(4, 113, 35, 0.3));
+                        }
+
+                        .btn-glass-edit-light:hover i {
+                            transform: translateX(3px);
+                            filter: drop-shadow(0 0 6px rgba(4, 113, 35, 0.5));
+                        }
+
+                        /* Text glow */
+                        .btn-text {
+                            transition: all 0.4s ease;
+                            display: inline-block;
+                        }
+
+                        .btn-glass-edit-light:hover .btn-text {
+                            text-shadow: 0 0 8px rgba(4, 113, 35, 0.2);
+                        }
+
+                        /* Focus state */
+                        .btn-glass-edit-light:focus {
+                            outline: none;
+                            box-shadow: 0 0 0 3px rgba(4, 113, 35, 0.2), 0 4px 15px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+                        }
+                    </style>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Enhanced form submission with animation
+        document.querySelector('form')?.addEventListener('submit', function (e) {
+            e.preventDefault();
+            document.body.style.opacity = '0';
+            document.body.style.transform = 'translateY(10px)';
+            setTimeout(() => this.submit(), 400);
+        });
+
+        // Avatar edit functionality
+        document.querySelector('.avatar-edit')?.addEventListener('click', function () {
+            // This would trigger your avatar upload modal in a real implementation
+            alert('Avatar change functionality would appear here');
+        });
+
+        // Staggered animation for elements
+        document.querySelectorAll('.animate-in').forEach(el => {
+            el.style.opacity = '0';
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const avatarUpload = document.getElementById('avatarUpload');
+            const avatarPreview = document.getElementById('avatarPreview');
+            const avatarEditButton = document.getElementById('avatarEditButton');
+            const form = document.querySelector('form');
+
+            // Click avatar to trigger file input
+            avatarPreview.addEventListener('click', () => avatarUpload.click());
+            avatarEditButton.addEventListener('click', () => avatarUpload.click());
+
+            // Preview image when file selected
+            avatarUpload.addEventListener('change', function (e) {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        avatarPreview.src = e.target.result;
+                    }
+
+                    reader.readAsDataURL(this.files[0]);
+
+                    // Submit the form immediately after selection
+                    if (form) {
+                        const submitButton = document.createElement('button');
+                        submitButton.type = 'submit';
+                        submitButton.style.display = 'none';
+                        form.appendChild(submitButton);
+                        submitButton.click();
+                        form.removeChild(submitButton);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

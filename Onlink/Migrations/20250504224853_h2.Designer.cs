@@ -12,8 +12,8 @@ using Onlink.Data;
 namespace Onlink.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250414205122_h1")]
-    partial class h1
+    [Migration("20250504224853_h2")]
+    partial class h2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,21 +24,6 @@ namespace Onlink.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("EmployeeJobApplication", b =>
-                {
-                    b.Property<int>("EmpJobEmployeeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("EmpJobJobApplicationId")
-                        .HasColumnType("int");
-
-                    b.HasKey("EmpJobEmployeeId", "EmpJobJobApplicationId");
-
-                    b.HasIndex("EmpJobJobApplicationId");
-
-                    b.ToTable("EmployeeJobApplication");
-                });
 
             modelBuilder.Entity("Onlink.Models.Certificate", b =>
                 {
@@ -124,23 +109,48 @@ namespace Onlink.Migrations
                         .HasMaxLength(24)
                         .HasColumnType("nvarchar(24)");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("PasswordConfirmation")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("EmployeeId");
 
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
                     b.ToTable("Employee");
+                });
+
+            modelBuilder.Entity("Onlink.Models.EmployeeJob", b =>
+                {
+                    b.Property<int>("EmployeeJobId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeeJobId"));
+
+                    b.Property<DateTime>("AppliedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CoverLetter")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("JobApplicationId")
+                        .HasColumnType("int");
+
+                    b.HasKey("EmployeeJobId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("JobApplicationId");
+
+                    b.ToTable("EmployeeJob");
                 });
 
             modelBuilder.Entity("Onlink.Models.Employer", b =>
@@ -160,21 +170,17 @@ namespace Onlink.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("PasswordConfirmation")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("EmployerId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Employer");
                 });
@@ -187,10 +193,7 @@ namespace Onlink.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JobId"));
 
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("EmployerId")
+                    b.Property<int>("EmployerId")
                         .HasColumnType("int");
 
                     b.Property<string>("JobDescription")
@@ -222,8 +225,15 @@ namespace Onlink.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JobApplicationId"));
 
+                    b.Property<DateTime>("ApplicationDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("JobId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("JobApplicationId");
 
@@ -231,6 +241,30 @@ namespace Onlink.Migrations
                         .IsUnique();
 
                     b.ToTable("JobApplication");
+                });
+
+            modelBuilder.Entity("Onlink.Models.LoginViewModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("RememberMe")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LoginViewModel");
                 });
 
             modelBuilder.Entity("Onlink.Models.Post", b =>
@@ -266,7 +300,7 @@ namespace Onlink.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PostId1")
+                    b.Property<int?>("ParentPostId")
                         .HasColumnType("int");
 
                     b.Property<int>("Privacy")
@@ -277,9 +311,49 @@ namespace Onlink.Migrations
 
                     b.HasKey("PostId");
 
-                    b.HasIndex("PostId1");
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("EmployerId");
+
+                    b.HasIndex("ParentPostId");
 
                     b.ToTable("Post");
+                });
+
+            modelBuilder.Entity("Onlink.Models.RegisterViewModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ConfrimPassword")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("UserType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RegisterViewModel");
                 });
 
             modelBuilder.Entity("Onlink.Models.Resume", b =>
@@ -298,10 +372,10 @@ namespace Onlink.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("EmployeeId")
+                    b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("EmployerId")
+                    b.Property<int?>("EmployerId")
                         .HasColumnType("int");
 
                     b.Property<string>("Experience")
@@ -337,19 +411,46 @@ namespace Onlink.Migrations
                     b.ToTable("Resume");
                 });
 
-            modelBuilder.Entity("EmployeeJobApplication", b =>
+            modelBuilder.Entity("Onlink.Models.User", b =>
                 {
-                    b.HasOne("Onlink.Models.Employee", null)
-                        .WithMany()
-                        .HasForeignKey("EmpJobEmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.HasOne("Onlink.Models.JobApplication", null)
-                        .WithMany()
-                        .HasForeignKey("EmpJobJobApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
+
+                    b.Property<string>("ConfirmPasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProfilePicturePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("UserType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Onlink.Models.Certificate", b =>
@@ -357,7 +458,7 @@ namespace Onlink.Migrations
                     b.HasOne("Onlink.Models.Employee", "Employee")
                         .WithMany("Certificates")
                         .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Employee");
@@ -368,17 +469,60 @@ namespace Onlink.Migrations
                     b.HasOne("Onlink.Models.Employee", "Employee")
                         .WithOne("CheckInfo")
                         .HasForeignKey("Onlink.Models.CheckInfo", "EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("Onlink.Models.Employee", b =>
+                {
+                    b.HasOne("Onlink.Models.User", "User")
+                        .WithOne("Employee")
+                        .HasForeignKey("Onlink.Models.Employee", "UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Onlink.Models.EmployeeJob", b =>
+                {
+                    b.HasOne("Onlink.Models.Employee", "Employee")
+                        .WithMany("JobApplications")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Onlink.Models.JobApplication", "JobApplication")
+                        .WithMany("EmployeeJobs")
+                        .HasForeignKey("JobApplicationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("JobApplication");
+                });
+
+            modelBuilder.Entity("Onlink.Models.Employer", b =>
+                {
+                    b.HasOne("Onlink.Models.User", "User")
+                        .WithOne("Employer")
+                        .HasForeignKey("Onlink.Models.Employer", "UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Onlink.Models.Job", b =>
                 {
                     b.HasOne("Onlink.Models.Employer", "Employer")
                         .WithMany("Jobs")
-                        .HasForeignKey("EmployerId");
+                        .HasForeignKey("EmployerId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Employer");
                 });
@@ -388,7 +532,7 @@ namespace Onlink.Migrations
                     b.HasOne("Onlink.Models.Job", "Job")
                         .WithOne("JobApplication")
                         .HasForeignKey("Onlink.Models.JobApplication", "JobId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Job");
@@ -396,24 +540,41 @@ namespace Onlink.Migrations
 
             modelBuilder.Entity("Onlink.Models.Post", b =>
                 {
-                    b.HasOne("Onlink.Models.Post", null)
-                        .WithMany("RelatedActivities")
-                        .HasForeignKey("PostId1");
+                    b.HasOne("Onlink.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Onlink.Models.Employer", "Employer")
+                        .WithMany()
+                        .HasForeignKey("EmployerId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Onlink.Models.Post", "ParentPost")
+                        .WithMany("RelatedPosts")
+                        .HasForeignKey("ParentPostId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("Employer");
+
+                    b.Navigation("ParentPost");
                 });
 
             modelBuilder.Entity("Onlink.Models.Resume", b =>
                 {
                     b.HasOne("Onlink.Models.Employee", "Employee")
-                        .WithMany("Resume")
+                        .WithMany("Resumes")
                         .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Onlink.Models.Employer", "Employer")
                         .WithMany("Resume")
                         .HasForeignKey("EmployerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Employee");
 
@@ -426,7 +587,9 @@ namespace Onlink.Migrations
 
                     b.Navigation("CheckInfo");
 
-                    b.Navigation("Resume");
+                    b.Navigation("JobApplications");
+
+                    b.Navigation("Resumes");
                 });
 
             modelBuilder.Entity("Onlink.Models.Employer", b =>
@@ -441,9 +604,21 @@ namespace Onlink.Migrations
                     b.Navigation("JobApplication");
                 });
 
+            modelBuilder.Entity("Onlink.Models.JobApplication", b =>
+                {
+                    b.Navigation("EmployeeJobs");
+                });
+
             modelBuilder.Entity("Onlink.Models.Post", b =>
                 {
-                    b.Navigation("RelatedActivities");
+                    b.Navigation("RelatedPosts");
+                });
+
+            modelBuilder.Entity("Onlink.Models.User", b =>
+                {
+                    b.Navigation("Employee");
+
+                    b.Navigation("Employer");
                 });
 #pragma warning restore 612, 618
         }

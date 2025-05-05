@@ -17,11 +17,11 @@
         public string Experience { get; set; }
 
         public string Skills { get; set; }
-
-        public int EmployeeId { get; set; }
-        public int EmployerId { get; set; }
-
         public string LinkPath { get; set; }
+
+        public int? EmployeeId { get; set; }
+        public int? EmployerId { get; set; }
+
         public Employee? Employee { get; set; }
         public Employer? Employer { get; set; }
     }

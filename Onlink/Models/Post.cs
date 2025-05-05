@@ -5,6 +5,8 @@ namespace Onlink.Models
     public class Post
     {
         public int PostId { get; set; }
+
+        // Foreign keys
         public int EmployeeId { get; set; }
         public int EmployerId { get; set; }
 
@@ -19,8 +21,14 @@ namespace Onlink.Models
         public int CommentCount { get; set; } = 0;
         public int ShareCount { get; set; } = 0;
 
+        // Navigation properties
+        public Employee Employee { get; set; }
+        public Employer Employer { get; set; }
 
-        public IEnumerable<Post> RelatedActivities { get; set; } = new List<Post>();
+        // Corrected self-referential relationship
+        public ICollection<Post> RelatedPosts { get; set; } = new List<Post>();
+        public int? ParentPostId { get; set; }  // Nullable foreign key for self-reference
+        public Post? ParentPost { get; set; }
     }
 
     public enum ActivityType
