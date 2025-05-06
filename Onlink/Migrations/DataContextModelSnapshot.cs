@@ -138,12 +138,17 @@ namespace Onlink.Migrations
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
+                    b.Property<int>("EmployerId")
+                        .HasColumnType("int");
+
                     b.Property<int>("JobApplicationId")
                         .HasColumnType("int");
 
                     b.HasKey("EmployeeJobId");
 
                     b.HasIndex("EmployeeId");
+
+                    b.HasIndex("EmployerId");
 
                     b.HasIndex("JobApplicationId");
 
@@ -240,30 +245,6 @@ namespace Onlink.Migrations
                     b.ToTable("JobApplication");
                 });
 
-            modelBuilder.Entity("Onlink.Models.LoginViewModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("RememberMe")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("LoginViewModel");
-                });
-
             modelBuilder.Entity("Onlink.Models.Post", b =>
                 {
                     b.Property<int>("PostId")
@@ -281,10 +262,10 @@ namespace Onlink.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EmployeeId")
+                    b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("EmployerId")
+                    b.Property<int?>("EmployerId")
                         .HasColumnType("int");
 
                     b.Property<int>("LikeCount")
@@ -315,42 +296,6 @@ namespace Onlink.Migrations
                     b.HasIndex("ParentPostId");
 
                     b.ToTable("Post");
-                });
-
-            modelBuilder.Entity("Onlink.Models.RegisterViewModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ConfrimPassword")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("UserType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RegisterViewModel");
                 });
 
             modelBuilder.Entity("Onlink.Models.Resume", b =>
@@ -491,6 +436,12 @@ namespace Onlink.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("Onlink.Models.Employer", "Employer")
+                        .WithMany()
+                        .HasForeignKey("EmployerId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("Onlink.Models.JobApplication", "JobApplication")
                         .WithMany("EmployeeJobs")
                         .HasForeignKey("JobApplicationId")
@@ -498,6 +449,8 @@ namespace Onlink.Migrations
                         .IsRequired();
 
                     b.Navigation("Employee");
+
+                    b.Navigation("Employer");
 
                     b.Navigation("JobApplication");
                 });
@@ -538,16 +491,14 @@ namespace Onlink.Migrations
             modelBuilder.Entity("Onlink.Models.Post", b =>
                 {
                     b.HasOne("Onlink.Models.Employee", "Employee")
-                        .WithMany()
+                        .WithMany("Posts")
                         .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Onlink.Models.Employer", "Employer")
-                        .WithMany()
+                        .WithMany("Posts")
                         .HasForeignKey("EmployerId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Onlink.Models.Post", "ParentPost")
                         .WithMany("RelatedPosts")
@@ -586,12 +537,16 @@ namespace Onlink.Migrations
 
                     b.Navigation("JobApplications");
 
+                    b.Navigation("Posts");
+
                     b.Navigation("Resumes");
                 });
 
             modelBuilder.Entity("Onlink.Models.Employer", b =>
                 {
                     b.Navigation("Jobs");
+
+                    b.Navigation("Posts");
 
                     b.Navigation("Resume");
                 });

@@ -1,78 +1,77 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Onlink.Models;
 
 namespace Onlink.Data
 {
     public class DataContext : DbContext
     {
-        public DataContext (DbContextOptions<DataContext> options)
-            : base(options)
-        {
-        }
+        public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
-        public DbSet<Onlink.Models.Employee> Employee { get; set; } = default!;
-        public DbSet<Onlink.Models.CheckInfo> CheckInfo { get; set; } = default!;
-        public DbSet<Onlink.Models.Job> Job { get; set; } = default!;
-        public DbSet<Onlink.Models.JobApplication> JobApplication { get; set; } = default!;
-        public DbSet<Onlink.Models.Employer> Employer { get; set; } = default!;
-        public DbSet<Onlink.Models.Post> Post { get; set; } = default!;
-        public DbSet<Onlink.Models.Resume> Resume { get; set; } = default!;
-        public DbSet<Onlink.Models.Certificate> Certificate { get; set; } = default!;
-        public DbSet<Onlink.Models.EmployeeJob> EmployeeJob { get; set; } = default!;
-
-        public DbSet<User> Users { get; set; } = default!;
-        public DbSet<LoginViewModel> LoginViewModel { get; set; } = default!;
-        public DbSet<RegisterViewModel> RegisterViewModel { get; set; } = default!;
+        public DbSet<User> Users { get; set; }
+        public DbSet<Employee> Employee { get; set; }
+        public DbSet<Employer> Employer { get; set; }
+        public DbSet<Post> Post { get; set; }
+        public DbSet<Resume> Resume { get; set; }
+        public DbSet<Certificate> Certificate { get; set; }
+        public DbSet<EmployeeJob> EmployeeJob { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Disable cascade delete globally first
+            // Disable all cascading deletes
             foreach (var relationship in modelBuilder.Model.GetEntityTypes()
                 .SelectMany(e => e.GetForeignKeys()))
             {
                 relationship.DeleteBehavior = DeleteBehavior.NoAction;
             }
 
-            // Configure User-Employer relationship
+            // User <-> Employer (1:1)
             modelBuilder.Entity<Employer>()
                 .HasOne(e => e.User)
                 .WithOne(u => u.Employer)
                 .HasForeignKey<Employer>(e => e.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // Configure User-Employee relationship
+            // User <-> Employee (1:1)
             modelBuilder.Entity<Employee>()
                 .HasOne(e => e.User)
                 .WithOne(u => u.Employee)
                 .HasForeignKey<Employee>(e => e.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // Configure other relationships as needed...
-
-            modelBuilder.Entity<Post>()
-            .HasMany(p => p.RelatedPosts)
-            .WithOne(p => p.ParentPost)
-            .HasForeignKey(p => p.ParentPostId)
-            .OnDelete(DeleteBehavior.NoAction);
-
-
+            // Resume <-> Employee
             modelBuilder.Entity<Resume>()
-             .HasOne(r => r.Employee)
-             .WithMany(e => e.Resumes)
-             .HasForeignKey(r => r.EmployeeId)
-             .OnDelete(DeleteBehavior.NoAction);
+                .HasOne(r => r.Employee)
+                .WithMany(e => e.Resumes)
+                .HasForeignKey(r => r.EmployeeId)
+                .OnDelete(DeleteBehavior.NoAction);
 
+            // Resume <-> Employer
             modelBuilder.Entity<Resume>()
                 .HasOne(r => r.Employer)
                 .WithMany(e => e.Resume)
                 .HasForeignKey(r => r.EmployerId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            // Post <-> Employee (optional)
+            modelBuilder.Entity<Post>()
+                .HasOne(p => p.Employee)
+                .WithMany(e => e.Posts)
+                .HasForeignKey(p => p.EmployeeId)
+                .OnDelete(DeleteBehavior.Restrict);
 
+            // Post <-> Employer (optional)
+            modelBuilder.Entity<Post>()
+                .HasOne(p => p.Employer)
+                .WithMany(e => e.Posts)
+                .HasForeignKey(p => p.EmployerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Self-referencing relationship for Post replies
+            modelBuilder.Entity<Post>()
+                .HasMany(p => p.RelatedPosts)
+                .WithOne(p => p.ParentPost)
+                .HasForeignKey(p => p.ParentPostId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             base.OnModelCreating(modelBuilder);
         }

@@ -56,10 +56,23 @@
             margin-top: 1rem;
         }
 
-        .icon-bar i {
-            margin-right: 10px;
-            cursor: pointer;
+        .icon-bar {
+            margin-top: 1rem;
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            font-weight: 500;
         }
+
+            .icon-bar i {
+                margin-right: 6px;
+                font-size: 1.1rem;
+                transition: transform 0.3s ease;
+            }
+
+                .icon-bar i:hover {
+                    transform: scale(1.15);
+                }
 
         .page-transition {
             animation: fadeIn 0.5s ease;
@@ -80,10 +93,9 @@
 </head>
 <body class="page-transition">
     <div class="container">
-        <h2 class="text-center mb-4">
-            <span style="border-bottom: 3px solid var(--primary-color); padding-bottom: 0.25rem;">Latest Posts</span>
-        </h2>
-
+       <br />
+        <br />
+   
         @foreach (var post in Model)
         {
             <div class="glass-container">
@@ -116,10 +128,16 @@
                     }
                 }
 
-                <div class="icon-bar mt-3">
-                    <i class="fas fa-heart"></i> @post.LikeCount
-                    <i class="fas fa-comment"></i> @post.CommentCount
-                    <i class="fas fa-share"></i> @post.ShareCount
+                <div class="icon-bar text-dark">
+                    <span class="d-flex align-items-center">
+                        <i class="fas fa-heart text-danger"></i>@post.LikeCount
+                    </span>
+                    <span class="d-flex align-items-center">
+                        <i class="fas fa-comment text-primary"></i>@post.CommentCount
+                    </span>
+                    <span class="d-flex align-items-center">
+                        <i class="fas fa-share text-success"></i>@post.ShareCount
+                    </span>
                 </div>
             </div>
         }

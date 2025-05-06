@@ -30,6 +30,7 @@ namespace Onlink.Models
         public ICollection<Certificate> Certificates { get; set; } = new List<Certificate>();
         public CheckInfo? CheckInfo { get; set; }
         public ICollection<EmployeeJob> JobApplications { get; set; } = new List<EmployeeJob>();
+        public ICollection<Post> Posts { get; set; } = new List<Post>();
 
         // User relationship
         public int UserId { get; set; }

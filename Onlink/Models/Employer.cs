@@ -21,6 +21,7 @@ namespace Onlink.Models
         public string? PhoneNumber { get; set; }
 
         public IEnumerable<Job>? Jobs { get; set; }
+        public IEnumerable<Post>? Posts { get; set; }
         public IEnumerable<Resume>? Resume { get; set; }
         public int UserId { get; set; }
         public User? User { get; set; }

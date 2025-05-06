@@ -6,6 +6,7 @@
 
         // Foreign keys
         public int EmployeeId { get; set; }
+        public int EmployerId { get; set; }
         public int JobApplicationId { get; set; }
 
         // Additional join table properties
@@ -13,7 +14,8 @@
         public string? CoverLetter { get; set; }
 
         // Navigation properties
-        public Employee? Employee { get; set; } = null!;
-        public JobApplication? JobApplication { get; set; } = null!;
+        public Employee? Employee { get; set; } 
+        public Employer? Employer{ get; set; } 
+        public JobApplication? JobApplication { get; set; }
     }
 }

@@ -3,16 +3,66 @@
     ViewData["Title"] = "Create Post";
     Layout = "_Layout";
 }
-<!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Onlink</title>
-    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600;700&display=swap" rel="stylesheet" />
-    <style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="glass-container">
+                <h2 class="text-center mb-4">
+                    <span style="border-bottom: 3px solid var(--primary-color); padding-bottom: 0.25rem;">Create New Post</span>
+                </h2>
+
+                <form asp-controller="Dashboards" asp-action="CreatePost" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="ActivityType" class="form-label">Activity Type</label>
+                        <select asp-for="ActivityType" class="form-control" asp-items="Html.GetEnumSelectList<ActivityType>()">
+                            <option value="">-- Select Activity --</option>
+                        </select>
+                        <span asp-validation-for="ActivityType" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="MediaFile" class="form-label">Upload Media (optional)</label>
+                        <input type="file" name="MediaFile" class="form-control" accept="image/*,video/*" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Privacy" class="form-label">Privacy</label>
+                        <select asp-for="Privacy" class="form-control" asp-items="Html.GetEnumSelectList<PostPrivacy>()">
+                            <option value="">-- Select Privacy --</option>
+                        </select>
+                        <span asp-validation-for="Privacy" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn-glass">
+                            <i class="fas fa-upload"></i> Submit Post
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("form").submit(function () {
+                $("button[type='submit']").prop("disabled", true);
+            });
+        });
+    </script>
+}
+
+ <style>
         :root {
             --primary-color: #047123;
             --primary-dark: #035a1c;
@@ -42,7 +92,7 @@
             width: 100%;
         }
 
-        .form-control {
+        .form-control, select {
             background: rgba(255, 255, 255, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 12px;
@@ -50,7 +100,7 @@
             transition: all 0.3s ease;
         }
 
-            .form-control:focus {
+            .form-control:focus, select:focus {
                 border-color: var(--primary-color);
                 box-shadow: 0 0 0 0.25rem rgba(4, 113, 35, 0.15);
                 background: rgba(255, 255, 255, 0.9);
@@ -88,57 +138,7 @@
         }
 
         @@keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
-</head>
-<body class="page-transition">
-    <div class="glass-container">
-        <h2 class="text-center mb-4">
-            <span style="border-bottom: 3px solid var(--primary-color); padding-bottom: 0.25rem;">Create New Post</span>
-        </h2>
-
-        <form asp-action="CreatePost" method="post" enctype="multipart/form-data">
-            @Html.AntiForgeryToken()
-
-            <div class="mb-3">
-                <label class="form-label">Activity Type</label>
-                <select asp-for="ActivityType" class="form-control" asp-items="Html.GetEnumSelectList<ActivityType>()">
-                    <option value="">-- Select Activity --</option>
-                </select>
-                <span asp-validation-for="ActivityType" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Upload Media (optional)</label>
-                <input type="file" name="MediaFile" class="form-control" accept="image/*,video/*" />
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Privacy</label>
-                <select asp-for="Privacy" class="form-control" asp-items="Html.GetEnumSelectList<PostPrivacy>()">
-                    <option value="">-- Select Privacy --</option>
-                </select>
-                <span asp-validation-for="Privacy" class="text-danger"></span>
-            </div>
-
-            <div class="d-grid mt-4">
-                <button type="submit" class="btn-glass">
-                    <i class="fas fa-upload"></i> Submit Post
-                </button>
-            </div>
-        </form>
-    </div>
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
