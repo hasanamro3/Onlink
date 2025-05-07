@@ -74,7 +74,7 @@ public class AccountsController : Controller
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction(nameof(Login));
     }
 
     [HttpGet]
@@ -271,4 +271,5 @@ public class AccountsController : Controller
 
     [HttpGet]
     public IActionResult Error() => View();
+    
 }

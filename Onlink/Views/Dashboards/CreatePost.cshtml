@@ -70,27 +70,25 @@
             --glass-opacity: 0.25;
         }
 
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Raleway', sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        font-family: 'Raleway', sans-serif;
+        margin: 0;
+        padding-top: 100px; /* space from top bar */
+        min-height: 100vh;
+    }
 
-        .glass-container {
-            background: rgba(255, 255, 255, var(--glass-opacity));
-            backdrop-filter: blur(var(--glass-blur));
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
-            padding: 2.5rem;
-            max-width: 700px;
-            width: 100%;
-        }
+    .glass-container {
+        background: rgba(255, 255, 255, var(--glass-opacity));
+        backdrop-filter: blur(var(--glass-blur));
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+        padding: 3rem 2.5rem;
+        width: 100%;
+        max-width: 550px;
+        margin: 0 auto; /* center horizontally */
+    }
 
         .form-control, select {
             background: rgba(255, 255, 255, 0.7);

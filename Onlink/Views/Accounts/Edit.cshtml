@@ -15,24 +15,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600;700&display=swap" rel="stylesheet" />
     <link rel="apple-touch-icon" sizes="57x57" href="/favicon.ico" style="border-radius:30px">
 
-    <style>
-        :root {
-            --primary-color: #047123;
-            --primary-dark: #035a1c;
-            --glass-blur: 12px;
-            --glass-opacity: 0.25;
-        }
+   <style>
+    :root {
+        --primary-color: #047123;
+        --primary-dark: #035a1c;
+        --glass-blur: 12px;
+        --glass-opacity: 0.25;
+    }
 
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Raleway', sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        font-family: 'Raleway', sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
         .glass-container {
             background: rgba(255, 255, 255, var(--glass-opacity));
@@ -42,129 +42,132 @@
             border: 1px solid rgba(255, 255, 255, 0.18);
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
             padding: 2.5rem;
-            max-width: 900px;
-            width: 100%;
+            width: 840px; /* ← تم تعديل هذا السطر */
+            margin-right:100px;
         }
 
-        .avatar-container {
-            position: relative;
-            width: fit-content;
-            margin: 0 auto 1.5rem;
+
+    .avatar-container {
+        position: relative;
+        width: fit-content;
+        margin: 0 auto 1.5rem;
+    }
+
+    .profile-avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--primary-color);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+    .profile-avatar:hover {
+        transform: scale(1.03);
+    }
+
+    .avatar-edit {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: var(--primary-color);
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid white;
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+
+    .avatar-container:hover .avatar-edit {
+        opacity: 1;
+        transform: translateY(-5px);
+    }
+
+    .form-control {
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 12px;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(4, 113, 35, 0.15);
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    .btn-glass {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(4, 113, 35, 0.4);
+        border-radius: 12px;
+        padding: 0.8rem 1.8rem;
+        color: var(--primary-color);
+        font-weight: 600;
+        text-transform: uppercase;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-glass:hover {
+        background: rgba(255, 255, 255, 0.8);
+        color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(4, 113, 35, 0.15);
+    }
+
+    .btn-glass i {
+        margin-right: 0.5rem;
+    }
+
+    .text-danger {
+        color: #ef4444;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    .page-transition {
+        animation: fadeIn 0.5s ease;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .glass-container {
+            padding: 1.5rem;
+            margin: 1rem;
         }
 
         .profile-avatar {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid var(--primary-color);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: transform 0.3s ease;
+            width: 120px;
+            height: 120px;
         }
+    }
+</style>
 
-        .profile-avatar:hover {
-            transform: scale(1.03);
-        }
-
-        .avatar-edit {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: var(--primary-color);
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid white;
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-
-        .avatar-container:hover .avatar-edit {
-            opacity: 1;
-            transform: translateY(-5px);
-        }
-
-        .form-control {
-            background: rgba(255, 255, 255, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
-            padding: 12px 15px;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(4, 113, 35, 0.15);
-            background: rgba(255, 255, 255, 0.9);
-        }
-
-        .btn-glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(4, 113, 35, 0.4);
-            border-radius: 12px;
-            padding: 0.8rem 1.8rem;
-            color: var(--primary-color);
-            font-weight: 600;
-            text-transform: uppercase;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-glass:hover {
-            background: rgba(255, 255, 255, 0.8);
-            color: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(4, 113, 35, 0.15);
-        }
-
-        .btn-glass i {
-            margin-right: 0.5rem;
-        }
-
-        .text-danger {
-            color: #ef4444;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
-
-        .page-transition {
-            animation: fadeIn 0.5s ease;
-        }
-
-        @@keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @@media (max-width: 768px) {
-            .glass-container {
-                padding: 1.5rem;
-            }
-
-            .profile-avatar {
-                width: 120px;
-                height: 120px;
-            }
-        }
-    </style>
 </head>
 <body class="page-transition">
     <div class="container py-5">

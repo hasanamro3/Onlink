@@ -11,9 +11,11 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Onlink.Controllers
 {
+    [Authorize]
     public class DashboardsController : Controller
     {
         private readonly DataContext _context;
@@ -91,7 +93,7 @@ namespace Onlink.Controllers
             return RedirectToAction(nameof(Posts));
         }
 
-
+        [Route("")]
         [HttpGet]
         public IActionResult Posts()
         {

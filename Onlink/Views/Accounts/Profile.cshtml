@@ -252,8 +252,11 @@
         }
 
             .btn-outline:hover {
-                background: var(--primary-light);
+                background: rgba(4, 113, 35, 0.15); /* زيادة وضوح اللون عند المرور */
+                color: var(--primary-dark);
+                border-color: var(--primary-dark);
                 transform: translateY(-2px);
+                box-shadow: 0 4px 10px rgba(4, 113, 35, 0.2); /* إضافة ظل ناعم */
             }
 
         .btn-danger {
@@ -339,8 +342,8 @@
             <div class="user-type delay-1">@Model.UserType</div>
 
             <div class="social-links delay-2">
-                <a href="#" class="social-link" title="LinkedIn">
-                    <i class="fab fa-linkedin-in"></i>
+                <a href="#" class="social-link" title="Facebook">
+                    <i class="fab fa-facebook-f"></i>
                 </a>
                 <a href="#" class="social-link" title="Twitter">
                     <i class="fab fa-twitter"></i>
@@ -349,6 +352,7 @@
                     <i class="fab fa-github"></i>
                 </a>
             </div>
+
 
             <div class="mt-auto w-100 delay-3">
                 <a href="#" class="btn btn-outline">
@@ -416,214 +420,95 @@
             <h2 class="section-title delay-2">Account Actions</h2>
 
             <div class="action-buttons delay-3">
-               
-                <a asp-controller="Accounts" asp-action="Edit" class="btn-glass-edit-green">
+                <a asp-controller="Accounts" asp-action="Edit" class="btn btn-glass green">
                     <i class="fas fa-user-edit me-2"></i>
                     <span class="btn-text">Edit Profile</span>
                 </a>
-                <form asp-action="Logout" method="post" class="d-flex">
-                    <button type="submit" class="btn-glass-edit-light">
+
+                <form asp-action="Logout" method="post" class="m-0">
+                    <button type="submit" class="btn btn-glass light">
                         <i class="fas fa-sign-out-alt me-2"></i>
                         <span class="btn-text">Sign Out</span>
                     </button>
-                    <style>
-                        .action-buttons {
-                            display: flex;
-                            justify-content: center;
-                            gap: 1.2rem; /* Space between buttons */
-                            flex-wrap: wrap;
-                        }
-
-                            .action-buttons .action-btn {
-                                min-width: 180px;
-                                text-align: center;
-                            }
-
-                        .btn-glass-edit-green {
-                            /* Glass effect */
-                            background: rgba(4, 113, 35, 0.15);
-                            backdrop-filter: blur(10px);
-                            -webkit-backdrop-filter: blur(10px);
-                            /* Border and shape */
-                            border: 1px solid rgba(4, 113, 35, 0.4);
-                            border-radius: 12px;
-                            padding: 0.8rem 1.8rem;
-                            /* Text and icon */
-                            color: #047123;
-                            font-weight: 600;
-                            letter-spacing: 0.5px;
-                            font-size: 0.9rem;
-                            text-transform: uppercase;
-                            /* Effects */
-                            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.2);
-                            transition: all 0.4s cubic-bezier(0.33, 1, 0.68, 1);
-                            position: relative;
-                            overflow: hidden;
-                            display: inline-flex;
-                            align-items: center;
-                            justify-content: center;
-                        }
-
-                            .btn-glass-edit-green:hover {
-                                background: rgba(4, 113, 35, 0.25);
-                                border-color: rgba(4, 113, 35, 0.7);
-                                color: #035a1c;
-                                transform: translateY(-2px);
-                                box-shadow: 0 6px 20px rgba(4, 113, 35, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.3);
-                            }
-
-                            .btn-glass-edit-green:active {
-                                transform: translateY(0);
-                                background: rgba(4, 113, 35, 0.35);
-                            }
-
-                            /* Subtle inner glow */
-                            .btn-glass-edit-green::after {
-                                content: '';
-                                position: absolute;
-                                top: 0;
-                                left: 0;
-                                right: 0;
-                                bottom: 0;
-                                background: radial-gradient(circle at center, rgba(4, 113, 35, 0.2) 0%, transparent 70%);
-                                opacity: 0;
-                                transition: opacity 0.4s ease;
-                            }
-
-                            .btn-glass-edit-green:hover::after {
-                                opacity: 1;
-                            }
-
-                            /* Icon animation */
-                            .btn-glass-edit-green i {
-                                transition: all 0.4s ease;
-                                filter: drop-shadow(0 0 4px rgba(4, 113, 35, 0.3));
-                            }
-
-                            .btn-glass-edit-green:hover i {
-                                transform: scale(1.1);
-                                filter: drop-shadow(0 0 6px rgba(4, 113, 35, 0.5));
-                            }
-
-                            /* Text animation */
-                            .btn-glass-edit-green .btn-text {
-                                transition: all 0.4s ease;
-                                display: inline-block;
-                            }
-
-                            .btn-glass-edit-green:hover .btn-text {
-                                letter-spacing: 0.8px;
-                            }
-
-                            /* Focus state */
-                            .btn-glass-edit-green:focus {
-                                outline: none;
-                                box-shadow: 0 0 0 3px rgba(4, 113, 35, 0.2), 0 4px 15px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.2);
-                            }
-                    </style>
-                    <style>
-                        .btn-glass-edit-light {
-                            /* Light glass effect */
-                            background: rgba(255, 255, 255, 0.7);
-                            backdrop-filter: blur(12px);
-                            -webkit-backdrop-filter: blur(12px);
-                            /* Border and shape */
-                            border: 1px solid rgba(4, 113, 35, 0.4);
-                            border-radius: 12px;
-                            padding: 0.8rem 1.8rem;
-                            /* Text and icon */
-                            color: #047123;
-                            font-weight: 600;
-                            letter-spacing: 0.5px;
-                            font-size: 0.9rem;
-                            text-transform: uppercase;
-                            /* Effects */
-                            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.3);
-                            transition: all 0.4s cubic-bezier(0.33, 1, 0.68, 1);
-                            position: relative;
-                            overflow: hidden;
-                            display: inline-flex;
-                            align-items: center;
-                            justify-content: center;
-                        }
-
-                            .btn-glass-edit-light:hover {
-                                background: rgba(255, 255, 255, 0.8);
-                                border-color: rgba(4, 113, 35, 0.7);
-                                color: #035a1c;
-                                transform: translateY(-2px);
-                                box-shadow: 0 6px 20px rgba(4, 113, 35, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.4);
-                            }
-
-                            .btn-glass-edit-light:active {
-                                transform: translateY(0);
-                                background: rgba(255, 255, 255, 0.6);
-                            }
-
-                            /* Pulsing glow effect */
-                            .btn-glass-edit-light::before {
-                                content: '';
-                                position: absolute;
-                                top: -50%;
-                                left: -50%;
-                                width: 200%;
-                                height: 200%;
-                                background: radial-gradient(circle, rgba(4, 113, 35, 0.1) 0%, transparent 70%);
-                                opacity: 0;
-                                transition: opacity 0.6s ease;
-                            }
-
-                            .btn-glass-edit-light:hover::before {
-                                opacity: 1;
-                                animation: pulse 2s infinite;
-                            }
-
-                        @@keyframes pulse {
-                            0% {
-                                transform: scale(0.95);
-                                opacity: 0.8;
-                            }
-
-                            50% {
-                                transform: scale(1.05);
-                                opacity: 0.4;
-                            }
-
-                            100% {
-                                transform: scale(0.95);
-                                opacity: 0.8;
-                            }
-                        }
-
-                        /* Icon animation */
-                        .btn-glass-edit-light i {
-                            transition: all 0.4s ease;
-                            filter: drop-shadow(0 0 4px rgba(4, 113, 35, 0.3));
-                        }
-
-                        .btn-glass-edit-light:hover i {
-                            transform: translateX(3px);
-                            filter: drop-shadow(0 0 6px rgba(4, 113, 35, 0.5));
-                        }
-
-                        /* Text glow */
-                        .btn-text {
-                            transition: all 0.4s ease;
-                            display: inline-block;
-                        }
-
-                        .btn-glass-edit-light:hover .btn-text {
-                            text-shadow: 0 0 8px rgba(4, 113, 35, 0.2);
-                        }
-
-                        /* Focus state */
-                        .btn-glass-edit-light:focus {
-                            outline: none;
-                            box-shadow: 0 0 0 3px rgba(4, 113, 35, 0.2), 0 4px 15px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.3);
-                        }
-                    </style>
                 </form>
             </div>
+
+            <style>
+                .action-buttons {
+                    display: flex;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                    gap: 1rem;
+                    margin-top: 2rem;
+                }
+
+                .btn-glass {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.5rem;
+                    padding: 0.85rem 1.8rem;
+                    border-radius: 12px;
+                    font-weight: 600;
+                    font-size: 0.95rem;
+                    letter-spacing: 0.5px;
+                    text-transform: uppercase;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+                    position: relative;
+                    overflow: hidden;
+                    border: 1px solid rgba(4, 113, 35, 0.4);
+                }
+
+                    .btn-glass.green {
+                        background: rgba(4, 113, 35, 0.15);
+                        color: #047123;
+                    }
+
+                    .btn-glass.light {
+                        background: rgba(255, 255, 255, 0.7);
+                        color: #047123;
+                    }
+
+                    .btn-glass:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 6px 20px rgba(4, 113, 35, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+                    }
+
+                    .btn-glass.green:hover {
+                        background: rgba(4, 113, 35, 0.25);
+                        color: #035a1c;
+                    }
+
+                    .btn-glass.light:hover {
+                        background: rgba(255, 255, 255, 0.85);
+                        color: #035a1c;
+                    }
+
+                    .btn-glass i {
+                        transition: all 0.3s ease;
+                        filter: drop-shadow(0 0 4px rgba(4, 113, 35, 0.3));
+                    }
+
+                    .btn-glass:hover i {
+                        transform: scale(1.1);
+                        filter: drop-shadow(0 0 6px rgba(4, 113, 35, 0.5));
+                    }
+
+                    .btn-glass .btn-text {
+                        transition: letter-spacing 0.3s ease;
+                    }
+
+                    .btn-glass:hover .btn-text {
+                        letter-spacing: 0.8px;
+                    }
+
+                    .btn-glass:focus {
+                        outline: none;
+                        box-shadow: 0 0 0 3px rgba(4, 113, 35, 0.2);
+                    }
+            </style>
+
         </div>
     </div>
 
