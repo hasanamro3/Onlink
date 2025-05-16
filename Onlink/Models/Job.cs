@@ -23,5 +23,6 @@ namespace Onlink.Models
 
         public JobApplication? JobApplication { get; set; }
         public Employer? Employer { get; set; }
+        public DateTime CreatedAt { get; internal set; }
     }
 }

@@ -28,14 +28,17 @@ public class AccountsController : Controller
         throw new UnauthorizedAccessException("User is not authenticated.");
     }
 
-    [HttpGet, AllowAnonymous]
+    [HttpGet]
+    [AllowAnonymous]
     public IActionResult Login(string? returnUrl = null)
     {
         ViewData["ReturnUrl"] = returnUrl;
         return View();
     }
 
-    [HttpPost, AllowAnonymous, ValidateAntiForgeryToken]
+    [HttpPost]
+    [AllowAnonymous]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
     {
         if (!ModelState.IsValid) return View(model);
@@ -67,14 +70,15 @@ public class AccountsController : Controller
             new ClaimsPrincipal(claimsIdentity),
             authProperties);
 
-        return LocalRedirect(returnUrl ?? "/");
+        return RedirectToAction("Posts", "Dashboards");
     }
 
-    [HttpPost, ValidateAntiForgeryToken]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        return RedirectToAction(nameof(Login));
+        return RedirectToAction("Login");
     }
 
     [HttpGet]
@@ -95,16 +99,16 @@ public class AccountsController : Controller
         ViewData["UserType"] = user.UserType;
         ViewData["ProfilePicturePath"] = user.ProfilePicturePath ?? "/images/default-user.png";
 
-        if (user.UserType == "Employee" && user.Employee == null) return Forbid();
-        if (user.UserType == "Employer" && user.Employer == null) return Forbid();
-
         return View(user);
     }
 
-    [HttpGet, AllowAnonymous]
+    [HttpGet]
+    [AllowAnonymous]
     public IActionResult Register() => View();
 
-    [HttpPost, AllowAnonymous, ValidateAntiForgeryToken]
+    [HttpPost]
+    [AllowAnonymous]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
         if (!ModelState.IsValid) return View(model);
@@ -171,7 +175,7 @@ public class AccountsController : Controller
             CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(identity));
 
-        return RedirectToAction("Posts");
+        return RedirectToAction("Posts", "Dashboards");
     }
 
     [HttpGet]
@@ -189,7 +193,8 @@ public class AccountsController : Controller
         return View(user);
     }
 
-    [HttpPost, ValidateAntiForgeryToken]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(User model, IFormFile? ProfilePictureFile)
     {
         var userId = GetCurrentUserId();
@@ -207,8 +212,6 @@ public class AccountsController : Controller
         {
             user.Employee.FirstName = model.Employee.FirstName;
             user.Employee.PhoneNumber = model.Employee.PhoneNumber;
-
-
         }
         else if (user.UserType == "Employer" && model.Employer != null)
         {
@@ -249,7 +252,8 @@ public class AccountsController : Controller
     [HttpGet]
     public IActionResult ChangePassword() => View();
 
-    [HttpPost, ValidateAntiForgeryToken]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
     {
         if (!ModelState.IsValid) return View(model);
@@ -271,8 +275,7 @@ public class AccountsController : Controller
         return RedirectToAction("Login");
     }
 
-    [AllowAnonymous]
     [HttpGet]
+    [AllowAnonymous]
     public IActionResult Error() => View();
-    
 }

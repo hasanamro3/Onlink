@@ -1,17 +1,14 @@
-﻿// This is the recommended solution for handling Post creation
-// based on your Post and Employee models.
-
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Onlink.Data;
 using Onlink.Models;
-using System;
 using System.IO;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
+using Onlink.Data;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Onlink.Controllers
 {
@@ -28,60 +25,108 @@ namespace Onlink.Controllers
         }
 
         [HttpGet]
-        public IActionResult CreatePost()
+        public async Task<IActionResult> CreateJob()
         {
+            ViewBag.EmployerId = new SelectList(await _context.Employer.ToListAsync(), "EmployerId", "Name");
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        
+        public async Task<IActionResult> CreateJob(Job job)
+        {
+            if (!ModelState.IsValid)
+                return View(job);
+
+            // 🔐 Get logged-in user ID
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+                return Unauthorized("User not logged in.");
+
+            // 🔎 Find Employer by user ID
+            var employer = await _context.Employer.FirstOrDefaultAsync(e => e.UserId == userId);
+            if (employer == null)
+                return BadRequest("Employer not found.");
+
+            // 🎯 Set employer ID from logged in user
+            job.EmployerId = employer.EmployerId;
+            job.CreatedAt = DateTime.UtcNow;
+
+            _context.Jobs.Add(job);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Posts", "Dashboards");
+        }
+
+
+
+        // GET: Show the form to create a post
+        [HttpGet]
+        public IActionResult CreatePost()
+        {
+            return View(new Post());
+        }
+
+        // POST: Save the post
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> CreatePost(Post model, IFormFile? MediaFile)
         {
             if (!ModelState.IsValid)
+            {
                 return View(model);
+            }
 
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
-            var user = await _context.Users
-                .Include(u => u.Employee)
-                .Include(u => u.Employer)
-                .FirstOrDefaultAsync(u => u.UserId == userId);
+            // Simulate logged-in user (replace with actual user logic)
+            var userId = 1; // Replace with actual user ID from auth/session
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
 
             if (user == null)
+            {
                 return NotFound("User not found.");
-
-            if (user.UserType == "Employee" && user.Employee != null)
-            {
-                model.EmployeeId = user.Employee.EmployeeId;
-            }
-            else if (user.UserType == "Employer" && user.Employer != null)
-            {
-                model.EmployerId = user.Employer.EmployerId;
-            }
-            else
-            {
-                ModelState.AddModelError("", "No valid employee or employer found.");
-                return View(model);
             }
 
-            // Media handling
+            // Set Employee or Employer ID
+            if (user.UserType == "Employee")
+            {
+                var employee = await _context.Employee.FirstOrDefaultAsync(e => e.UserId == userId);
+                if (employee != null)
+                {
+                    model.EmployeeId = employee.EmployeeId;
+                    model.EmployerId = 0;
+                }
+            }
+            else if (user.UserType == "Employer")
+            {
+                var employer = await _context.Employer.FirstOrDefaultAsync(e => e.UserId == userId);
+                if (employer != null)
+                {
+                    model.EmployerId = employer.EmployerId;
+                    model.EmployeeId = 0;
+                }
+            }
+
+            // Handle media upload (Image/Video)
             if (MediaFile != null && MediaFile.Length > 0)
             {
-                var uploads = Path.Combine(_env.WebRootPath, "uploads", "posts");
-                Directory.CreateDirectory(uploads);
+                var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", "posts");
+                Directory.CreateDirectory(uploadsDir);
 
-                var fileName = $"{Guid.NewGuid()}{Path.GetExtension(MediaFile.FileName)}";
-                var filePath = Path.Combine(uploads, fileName);
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(MediaFile.FileName);
+                var filePath = Path.Combine(uploadsDir, fileName);
 
-                using var stream = new FileStream(filePath, FileMode.Create);
-                await MediaFile.CopyToAsync(stream);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await MediaFile.CopyToAsync(stream);
+                }
 
-                model.MediaUrl = $"/uploads/posts/{fileName}";
+                model.MediaUrl = "/uploads/posts/" + fileName;
                 model.MediaType = MediaFile.ContentType.StartsWith("video") ? MediaType.Video : MediaType.Image;
             }
             else
             {
-                model.MediaUrl = "";
+                model.MediaUrl = string.Empty;
                 model.MediaType = MediaType.None;
             }
 
@@ -93,17 +138,41 @@ namespace Onlink.Controllers
             return RedirectToAction(nameof(Posts));
         }
 
-        [Route("")]
+        // GET: Display all posts
         [HttpGet]
-        public IActionResult Posts()
+        public async Task<IActionResult> Posts()
         {
-            var posts = _context.Post
+            var posts = await _context.Post
                 .Include(p => p.Employee)
                 .Include(p => p.Employer)
                 .OrderByDescending(p => p.CreatedAt)
-                .ToList();
+                .ToListAsync();
 
             return View(posts);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> LikePost(int id)
+        {
+            var post = await _context.Post.FindAsync(id);
+            if (post == null) return NotFound();
+
+            post.LikeCount++;
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, likeCount = post.LikeCount });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Jobs()
+        {
+            var jobs = await _context.Jobs
+                .Include(j => j.Employer)
+                .OrderByDescending(j => j.SubmitSessionDueDate)
+                .ToListAsync();
+
+            return View(jobs);
+        }
+
     }
 }

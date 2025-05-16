@@ -9,6 +9,7 @@ namespace Onlink.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Employee> Employee { get; set; }
+        public DbSet<Job> Jobs { get; set; }
         public DbSet<Employer> Employer { get; set; }
         public DbSet<Post> Post { get; set; }
         public DbSet<Resume> Resume { get; set; }
