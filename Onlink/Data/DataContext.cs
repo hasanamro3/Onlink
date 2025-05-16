@@ -15,6 +15,8 @@ namespace Onlink.Data
         public DbSet<Resume> Resume { get; set; }
         public DbSet<Certificate> Certificate { get; set; }
         public DbSet<EmployeeJob> EmployeeJob { get; set; }
+        public DbSet<PostLike> PostLikes { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -73,6 +75,11 @@ namespace Onlink.Data
                 .WithOne(p => p.ParentPost)
                 .HasForeignKey(p => p.ParentPostId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<PostLike>()
+                .HasIndex(pl => new { pl.PostId, pl.UserId })
+                .IsUnique(); // prevents duplicate likes per user per post
+
 
             base.OnModelCreating(modelBuilder);
         }

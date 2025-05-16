@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Onlink.Data;
 
@@ -11,9 +12,11 @@ using Onlink.Data;
 namespace Onlink.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250516114640_m2")]
+    partial class m2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -195,9 +198,6 @@ namespace Onlink.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JobId"));
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("EmployerId")
                         .HasColumnType("int");
 
@@ -219,7 +219,7 @@ namespace Onlink.Migrations
 
                     b.HasIndex("EmployerId");
 
-                    b.ToTable("Jobs");
+                    b.ToTable("Job");
                 });
 
             modelBuilder.Entity("Onlink.Models.JobApplication", b =>
@@ -246,6 +246,30 @@ namespace Onlink.Migrations
                         .IsUnique();
 
                     b.ToTable("JobApplication");
+                });
+
+            modelBuilder.Entity("Onlink.Models.LoginViewModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("RememberMe")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LoginViewModel");
                 });
 
             modelBuilder.Entity("Onlink.Models.Post", b =>
@@ -301,31 +325,40 @@ namespace Onlink.Migrations
                     b.ToTable("Post");
                 });
 
-            modelBuilder.Entity("Onlink.Models.PostLike", b =>
+            modelBuilder.Entity("Onlink.Models.RegisterViewModel", b =>
                 {
-                    b.Property<int>("PostLikeId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PostLikeId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("LikedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("ConfrimPassword")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("PostId")
-                        .HasColumnType("int");
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("PostLikeId");
+                    b.Property<string>("UserType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("UserId");
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.HasIndex("PostId", "UserId")
-                        .IsUnique();
+                    b.HasKey("Id");
 
-                    b.ToTable("PostLikes");
+                    b.ToTable("RegisterViewModel");
                 });
 
             modelBuilder.Entity("Onlink.Models.Resume", b =>
@@ -524,12 +557,12 @@ namespace Onlink.Migrations
                     b.HasOne("Onlink.Models.Employee", "Employee")
                         .WithMany("Posts")
                         .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Onlink.Models.Employer", "Employer")
                         .WithMany("Posts")
                         .HasForeignKey("EmployerId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Onlink.Models.Post", "ParentPost")
                         .WithMany("RelatedPosts")
@@ -541,25 +574,6 @@ namespace Onlink.Migrations
                     b.Navigation("Employer");
 
                     b.Navigation("ParentPost");
-                });
-
-            modelBuilder.Entity("Onlink.Models.PostLike", b =>
-                {
-                    b.HasOne("Onlink.Models.Post", "Post")
-                        .WithMany()
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Onlink.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Post");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Onlink.Models.Resume", b =>

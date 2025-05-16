@@ -70,7 +70,6 @@ namespace Onlink.Controllers
         // POST: Save the post
         [HttpPost]
         [ValidateAntiForgeryToken]
-
         public async Task<IActionResult> CreatePost(Post model, IFormFile? MediaFile)
         {
             if (!ModelState.IsValid)
@@ -78,36 +77,37 @@ namespace Onlink.Controllers
                 return View(model);
             }
 
-            // Simulate logged-in user (replace with actual user logic)
-            var userId = 1; // Replace with actual user ID from auth/session
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+            // ✅ Get the logged-in user ID from the authentication claims
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+                return Unauthorized("User not logged in.");
 
+            // ✅ Find the User in the database
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
             if (user == null)
             {
                 return NotFound("User not found.");
             }
 
-            // Set Employee or Employer ID
+            // ✅ Link the post to either an Employee or Employer based on user type
             if (user.UserType == "Employee")
             {
                 var employee = await _context.Employee.FirstOrDefaultAsync(e => e.UserId == userId);
-                if (employee != null)
-                {
-                    model.EmployeeId = employee.EmployeeId;
-                    model.EmployerId = 0;
-                }
+                if (employee == null) return BadRequest("Employee not found.");
+
+                model.EmployeeId = employee.EmployeeId;
+                model.EmployerId = null;
             }
             else if (user.UserType == "Employer")
             {
                 var employer = await _context.Employer.FirstOrDefaultAsync(e => e.UserId == userId);
-                if (employer != null)
-                {
-                    model.EmployerId = employer.EmployerId;
-                    model.EmployeeId = 0;
-                }
+                if (employer == null) return BadRequest("Employer not found.");
+
+                model.EmployerId = employer.EmployerId;
+                model.EmployeeId = null;
             }
 
-            // Handle media upload (Image/Video)
+            // ✅ Handle file upload
             if (MediaFile != null && MediaFile.Length > 0)
             {
                 var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", "posts");
@@ -138,6 +138,7 @@ namespace Onlink.Controllers
             return RedirectToAction(nameof(Posts));
         }
 
+
         // GET: Display all posts
         [HttpGet]
         public async Task<IActionResult> Posts()
@@ -152,16 +153,40 @@ namespace Onlink.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> LikePost(int id)
-        {
-            var post = await _context.Post.FindAsync(id);
-            if (post == null) return NotFound();
+public async Task<IActionResult> LikePost(int id)
+{
+    // Get logged-in user ID
+    var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+        return Unauthorized();
 
-            post.LikeCount++;
-            await _context.SaveChangesAsync();
+    // Check if user already liked the post
+    bool alreadyLiked = await _context.PostLikes
+        .AnyAsync(pl => pl.PostId == id && pl.UserId == userId);
 
-            return Json(new { success = true, likeCount = post.LikeCount });
-        }
+    if (alreadyLiked)
+    {
+        return Json(new { success = false, message = "You already liked this post." });
+    }
+
+    // Add like record
+    _context.PostLikes.Add(new PostLike
+    {
+        PostId = id,
+        UserId = userId
+    });
+
+    // Increase post's like count
+    var post = await _context.Post.FindAsync(id);
+    if (post == null) return NotFound();
+
+    post.LikeCount++;
+
+    await _context.SaveChangesAsync();
+
+    return Json(new { success = true, likeCount = post.LikeCount });
+}
+
 
         [HttpGet]
         public async Task<IActionResult> Jobs()
