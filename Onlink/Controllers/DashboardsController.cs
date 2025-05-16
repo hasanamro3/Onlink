@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Onlink.Data;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Onlink.Controllers
 {
@@ -19,6 +20,29 @@ namespace Onlink.Controllers
             _context = context;
             _env = env;
         }
+
+        [HttpGet]
+        public async Task<IActionResult> CreateJob()
+        {
+            ViewBag.EmployerId = new SelectList(await _context.Employer.ToListAsync(), "EmployerId", "Name");
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateJob(Job job)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Job.Add(job);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            ViewBag.EmployerId = new SelectList(await _context.Employer.ToListAsync(), "EmployerId", "Name", job.EmployerId);
+            return View(job);
+        }
+
 
         // GET: Show the form to create a post
         [HttpGet]
