@@ -22,6 +22,8 @@ namespace Onlink.Models
         public string Experience { get; set; }
 
         public string Skills { get; set; }
+
+        [Url]
         public string LinkPath { get; set; }
 
         public int? EmployeeId { get; set; }

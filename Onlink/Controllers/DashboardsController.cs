@@ -110,5 +110,18 @@ namespace Onlink.Controllers
 
             return View(posts);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> LikePost(int id)
+        {
+            var post = await _context.Post.FindAsync(id);
+            if (post == null) return NotFound();
+
+            post.LikeCount++;
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, likeCount = post.LikeCount });
+        }
+
     }
 }
