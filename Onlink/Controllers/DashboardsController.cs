@@ -190,19 +190,24 @@ public async Task<IActionResult> LikePost(int id)
             var jobsQuery = _context.Jobs.Include(j => j.Employer).AsQueryable();
 
             if (sort == "salary_desc")
-            {
                 jobsQuery = jobsQuery.OrderByDescending(j => j.JobSalary);
-            }
             else if (sort == "salary_asc")
-            {
                 jobsQuery = jobsQuery.OrderBy(j => j.JobSalary);
-            }
 
             var jobs = await jobsQuery.ToListAsync();
-            ViewBag.Sort = sort;
 
+            // Get logged-in user type
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!string.IsNullOrEmpty(userIdClaim) && int.TryParse(userIdClaim, out int userId))
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+                ViewBag.UserType = user?.UserType;
+            }
+
+            ViewBag.Sort = sort;
             return View(jobs);
         }
+
 
 
 
