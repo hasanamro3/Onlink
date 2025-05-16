@@ -38,17 +38,14 @@ namespace Onlink.Controllers
             if (!ModelState.IsValid)
                 return View(job);
 
-            // 🔐 Get logged-in user ID
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
                 return Unauthorized("User not logged in.");
 
-            // 🔎 Find Employer by user ID
             var employer = await _context.Employer.FirstOrDefaultAsync(e => e.UserId == userId);
             if (employer == null)
                 return BadRequest("Employer not found.");
 
-            // 🎯 Set employer ID from logged in user
             job.EmployerId = employer.EmployerId;
             job.CreatedAt = DateTime.UtcNow;
 
@@ -187,17 +184,28 @@ public async Task<IActionResult> LikePost(int id)
     return Json(new { success = true, likeCount = post.LikeCount });
 }
 
-
         [HttpGet]
-        public async Task<IActionResult> Jobs()
+        public async Task<IActionResult> Jobs(string sort = "")
         {
-            var jobs = await _context.Jobs
-                .Include(j => j.Employer)
-                .OrderByDescending(j => j.SubmitSessionDueDate)
-                .ToListAsync();
+            var jobsQuery = _context.Jobs.Include(j => j.Employer).AsQueryable();
+
+            if (sort == "salary_desc")
+            {
+                jobsQuery = jobsQuery.OrderByDescending(j => j.JobSalary);
+            }
+            else if (sort == "salary_asc")
+            {
+                jobsQuery = jobsQuery.OrderBy(j => j.JobSalary);
+            }
+
+            var jobs = await jobsQuery.ToListAsync();
+            ViewBag.Sort = sort;
 
             return View(jobs);
         }
+
+
+
 
     }
 }

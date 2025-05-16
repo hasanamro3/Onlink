@@ -23,6 +23,31 @@
             <span style="border-bottom: 3px solid var(--primary-color); padding-bottom: 0.25rem;">Available Jobs</span>
         </h2>
 
+        <!-- Sort Button with Toggle -->
+        <div class="d-flex justify-content-end mb-3 gap-2">
+            @{
+                string currentSort = ViewBag.Sort as string ?? "";
+                string nextSort = currentSort == "salary_desc" ? "salary_asc" : "salary_desc";
+                string sortLabel = currentSort == "salary_desc" ? "Sort by Salary (Low to High)" : "Sort by Salary (High to Low)";
+                string sortIcon = currentSort == "salary_desc" ? "fa-sort-amount-up" : "fa-sort-amount-down-alt";
+            }
+
+            <form method="get" asp-action="Jobs" asp-controller="Dashboards">
+                <input type="hidden" name="sort" value="@nextSort" />
+                <button type="submit" class="btn btn-outline-success">
+                    <i class="fas @sortIcon me-1"></i> @sortLabel
+                </button>
+            </form>
+
+            @if (!string.IsNullOrEmpty(currentSort))
+            {
+                <a class="btn btn-outline-secondary" asp-action="Jobs" asp-controller="Dashboards">
+                    <i class="fas fa-times me-1"></i> Clear Sort
+                </a>
+            }
+        </div>
+
+        <!-- Jobs List -->
         @foreach (var job in Model)
         {
             <div class="glass-container">
@@ -100,5 +125,20 @@
             opacity: 1;
             transform: translateY(0);
         }
+    }
+
+    .btn-outline-success {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+        .btn-outline-success:hover {
+            background-color: var(--primary-color);
+            color: #fff;
+        }
+
+    .btn-outline-secondary:hover {
+        background-color: #6c757d;
+        color: #fff;
     }
 </style>
