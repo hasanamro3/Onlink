@@ -19,8 +19,6 @@ namespace Onlink.Models
 
         public DateTime SubmitSessionDueDate { get; set; }
 
-
-
         public int EmployerId { get; set; }
 
         public JobApplication? JobApplication { get; set; }

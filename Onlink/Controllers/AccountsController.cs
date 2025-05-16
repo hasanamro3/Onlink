@@ -171,7 +171,7 @@ public class AccountsController : Controller
             CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(identity));
 
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction("Posts");
     }
 
     [HttpGet]
@@ -207,6 +207,8 @@ public class AccountsController : Controller
         {
             user.Employee.FirstName = model.Employee.FirstName;
             user.Employee.PhoneNumber = model.Employee.PhoneNumber;
+
+
         }
         else if (user.UserType == "Employer" && model.Employer != null)
         {
@@ -269,6 +271,7 @@ public class AccountsController : Controller
         return RedirectToAction("Login");
     }
 
+    [AllowAnonymous]
     [HttpGet]
     public IActionResult Error() => View();
     

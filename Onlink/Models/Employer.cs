@@ -14,8 +14,6 @@ namespace Onlink.Models
         [Required(ErrorMessage = "Email Is Required")]
         public string Email { get; set; }
 
-        
-
         [StringLength(15, MinimumLength = 10, ErrorMessage = "Phone Not Valid")]
         [Phone]
         public string? PhoneNumber { get; set; }
