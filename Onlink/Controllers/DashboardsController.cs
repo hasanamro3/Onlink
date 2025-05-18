@@ -208,9 +208,78 @@ public async Task<IActionResult> LikePost(int id)
             return View(jobs);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> MyPosts()
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var user = await _context.Users.Include(u => u.Employee).Include(u => u.Employer).FirstOrDefaultAsync(u => u.UserId == userId);
 
+            if (user == null)
+                return NotFound();
 
+            List<Post> posts;
 
+            if (user.UserType == "Employee")
+            {
+                posts = await _context.Post
+                    .Where(p => p.EmployeeId == user.Employee.EmployeeId)
+                    .OrderByDescending(p => p.CreatedAt)
+                    .ToListAsync();
+            }
+            else
+            {
+                posts = await _context.Post
+                    .Where(p => p.EmployerId == user.Employer.EmployerId)
+                    .OrderByDescending(p => p.CreatedAt)
+                    .ToListAsync();
+            }
+
+            return View(posts);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditPost(int id)
+        {
+            var post = await _context.Post.FindAsync(id);
+            if (post == null) return NotFound();
+
+            return View(post);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditPost(Post post, IFormFile? MediaFile)
+        {
+            if (!ModelState.IsValid)
+                return View(post);
+
+            var existing = await _context.Post.FindAsync(post.PostId);
+            if (existing == null) return NotFound();
+
+            existing.ActivityType = post.ActivityType;
+            existing.Privacy = post.Privacy;
+
+            // If a new media file is uploaded
+            if (MediaFile != null && MediaFile.Length > 0)
+            {
+                var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", "posts");
+                Directory.CreateDirectory(uploadsDir);
+
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(MediaFile.FileName);
+                var filePath = Path.Combine(uploadsDir, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await MediaFile.CopyToAsync(stream);
+                }
+
+                existing.MediaUrl = "/uploads/posts/" + fileName;
+                existing.MediaType = MediaFile.ContentType.StartsWith("video") ? MediaType.Video : MediaType.Image;
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(MyPosts));
+        }
 
     }
 }

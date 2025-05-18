@@ -1,0 +1,138 @@
+﻿@model Onlink.Models.Post
+@{
+    ViewData["Title"] = "Edit Post";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Onlink</title>
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --primary-color: #047123;
+            --primary-dark: #035a1c;
+            --glass-blur: 12px;
+            --glass-opacity: 0.22;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Raleway', sans-serif;
+            padding: 2rem;
+        }
+
+        .glass-form {
+            background: rgba(255, 255, 255, var(--glass-opacity));
+            backdrop-filter: blur(var(--glass-blur));
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 24px rgba(31, 38, 135, 0.15);
+            padding: 2rem 3rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        h2.section-title {
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            border-bottom: 3px solid var(--primary-color);
+            display: inline-block;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+        }
+
+            .btn-primary:hover {
+                background: var(--primary-dark);
+            }
+
+        .btn-danger {
+            background: #e74a3b;
+            border: none;
+            color: white;
+        }
+
+            .btn-danger:hover {
+                background: #c0392b;
+            }
+    </style>
+</head>
+<body>
+    <div class="glass-form">
+        <h2 class="section-title">Edit Post</h2>
+
+        <form asp-action="EditPost" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="PostId" />
+
+            <div class="form-group mb-3">
+                <label asp-for="ActivityType"></label>
+                <select asp-for="ActivityType" class="form-control">
+                    <option value="Post">Post</option>
+                    <option value="Like">Like</option>
+                    <option value="Comment">Comment</option>
+                    <option value="Share">Share</option>
+                    <option value="Save">Save</option>
+                </select>
+                <span asp-validation-for="ActivityType" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-4">
+                <label asp-for="Privacy"></label>
+                <select asp-for="Privacy" class="form-control">
+                    <option value="Public">Public</option>
+                    <option value="FriendsOnly">FriendsOnly</option>
+                    <option value="Private">Private</option>
+                </select>
+                <span asp-validation-for="Privacy" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-4">
+                <label>Current Media</label>
+                <div>
+                    @if (!string.IsNullOrEmpty(Model.MediaUrl))
+                    {
+                        if (Model.MediaType == MediaType.Image)
+                        {
+                            <img src="@Model.MediaUrl" alt="Current Media" style="max-width: 100%; border-radius: 10px; margin-bottom: 1rem;" />
+                        }
+                        else if (Model.MediaType == MediaType.Video)
+                        {
+                            <video controls style="max-width: 100%; border-radius: 10px; margin-bottom: 1rem;">
+                                <source src="@Model.MediaUrl" type="video/mp4" />
+                                Your browser does not support the video tag.
+                            </video>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">No media uploaded.</p>
+                    }
+                </div>
+
+                <label class="mt-2">Upload New Media (optional)</label>
+                <input type="file" name="MediaFile" class="form-control" accept="image/*,video/*" />
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-primary">Update</button>
+                <a asp-action="MyPosts" class="btn btn-danger">Cancel</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
