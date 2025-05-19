@@ -32,6 +32,9 @@ namespace Onlink.Models
         public Employee? Employee { get; set; }
         public Employer? Employer { get; set; }
         public string? ProfilePicturePath { get; set; }
+        public string? FacebookUrl { get; set; }
+        public string? TwitterUrl { get; set; }
+        public string? GitHubUrl { get; set; }
 
     }
 }

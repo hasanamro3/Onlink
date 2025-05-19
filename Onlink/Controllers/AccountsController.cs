@@ -207,6 +207,10 @@ public class AccountsController : Controller
 
         user.UserName = model.UserName;
         user.Email = model.Email;
+        user.FacebookUrl = model.FacebookUrl;
+        user.TwitterUrl = model.TwitterUrl;
+        user.GitHubUrl = model.GitHubUrl;
+
 
         if (user.UserType == "Employee" && model.Employee != null)
         {
@@ -247,6 +251,7 @@ public class AccountsController : Controller
         await _db.SaveChangesAsync();
         TempData["SuccessMessage"] = "Profile updated successfully!";
         return RedirectToAction("Profile");
+
     }
 
     [HttpGet]

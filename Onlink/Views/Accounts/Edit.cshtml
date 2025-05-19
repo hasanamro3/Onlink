@@ -225,6 +225,7 @@
                                 <span asp-validation-for="Email" class="text-danger"></span>
                             </div>
 
+
                             @if (Model.UserType == "Employee" && Model.Employee != null)
                             {
                                 <input type="hidden" name="Employee.EmployeeId" value="@Model.Employee.EmployeeId" />
@@ -238,6 +239,19 @@
                                     <input name="Employee.LastName" value="@Model.Employee.LastName" class="form-control" placeholder="Last Name" />
                                     <span asp-validation-for="Employee.LastName" class="text-danger"></span>
                                 </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel"
+                                           name="Employer.PhoneNumber"
+                                           value="@Model.Employee.PhoneNumber"
+                                           class="form-control"
+                                           placeholder="e.g. +962779545697"
+                                           
+                                           maxlength="14"
+                                           required />
+                                    <span asp-validation-for="Employee.PhoneNumber" class="text-danger"></span>
+                                </div>
+
                             }
                             else if (Model.UserType == "Employer" && Model.Employer != null)
                             {
@@ -247,7 +261,41 @@
                                     <input name="Employer.Name" value="@Model.Employer.Name" class="form-control" placeholder="Employer Name" />
                                     <span asp-validation-for="Employer.Name" class="text-danger"></span>
                                 </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel"
+                                           name="Employer.PhoneNumber"
+                                           value="@Model.Employer.PhoneNumber"
+                                           class="form-control"
+                                           placeholder="e.g. +962779545697"
+                                          
+                                           maxlength="14"
+                                           required />
+                                    <span asp-validation-for="Employer.PhoneNumber" class="text-danger"></span>
+                                </div>
                             }
+
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label asp-for="FacebookUrl" class="form-label">Facebook URL</label>
+                                    <input asp-for="FacebookUrl" class="form-control" placeholder="https://facebook.com/yourprofile" />
+                                    <span asp-validation-for="FacebookUrl" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="TwitterUrl" class="form-label">Twitter URL</label>
+                                    <input asp-for="TwitterUrl" class="form-control" placeholder="https://twitter.com/yourprofile" />
+                                    <span asp-validation-for="TwitterUrl" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="GitHubUrl" class="form-label">GitHub URL</label>
+                                    <input asp-for="GitHubUrl" class="form-control" placeholder="https://github.com/yourusername" />
+                                    <span asp-validation-for="GitHubUrl" class="text-danger"></span>
+                                </div>
+                            </div>
+
 
                             <div class="d-grid mt-4">
                                 <button type="submit" class="btn-glass">
@@ -296,5 +344,12 @@
             });
         });
     </script>
+    <script>
+        const phoneInput = document.querySelector('input[name="Employer.PhoneNumber"]');
+        phoneInput.addEventListener('input', function () {
+            this.value = this.value.replace(/[^+\d]/g, ''); // Only + and digits
+        });
+    </script>
+
 </body>
 </html>

@@ -341,23 +341,25 @@
             <h1 class="username delay-1">@Model.UserName</h1>
             <div class="user-type delay-1">@Model.UserType</div>
 
+
             <div class="social-links delay-2">
-                <a href="#" class="social-link" title="Facebook">
+                <a href="@Model.FacebookUrl" class="social-link" title="Facebook">
                     <i class="fab fa-facebook-f"></i>
                 </a>
-                <a href="#" class="social-link" title="Twitter">
+                <a href="@Model.TwitterUrl" class="social-link" title="Twitter">
                     <i class="fab fa-twitter"></i>
                 </a>
-                <a href="#" class="social-link" title="GitHub">
+                <a href="@Model.GitHubUrl" class="social-link" title="GitHub">
                     <i class="fab fa-github"></i>
                 </a>
             </div>
+            
+            
 
             <div class="mt-auto w-100 delay-3">
-                <a asp-controller="Dashboards" asp-action="MyPosts" class="btn btn-outline">
-                    <i class="fas fa-list me-1"></i> My Posts
+                <a href="#" class="btn btn-outline">
+                    <i class="fas fa-share-alt me-1"></i> Share Profile
                 </a>
-
             </div>
         </div>
 
@@ -395,6 +397,38 @@
                         </div>
                         <div class="info-value">EMP-@Model.Employee.UserId.ToString("D5")</div>
                     </div>
+
+                    <div class="info-item delay-2">
+                        <div class="info-label"><i class="fas fa-envelope-open"></i> Email</div>
+                        <div class="info-value">@Model.Employee.Email</div>
+                    </div>
+
+                    <div class="info-item delay-2">
+                        <div class="info-label">
+                            <i class="fas fa-phone-alt"></i> Phone Number
+                        </div>
+                        <div class="info-value">@Model.Employee.PhoneNumber</div>
+                    </div>
+
+                    <div class="info-item delay-2">
+                        <div class="info-label"><i class="fas fa-info-circle"></i> Bio</div>
+                        <div class="info-value">@Model.Employee.Bio</div>
+                    </div>
+
+                    <div class="info-item delay-2">
+                        <div class="info-label"><i class="fas fa-briefcase"></i> Jobs Applied</div>
+                        <div class="info-value">@Model.Employee.JobApplications.Count()</div>
+                    </div>
+
+                    <div class="info-item delay-2">
+                        <div class="info-label"><i class="fas fa-certificate"></i> Certificates</div>
+                        <div class="info-value">@Model.Employee.Certificates.Count()</div>
+                    </div>
+
+                    <div class="info-item delay-2">
+                        <div class="info-label"><i class="fas fa-file-alt"></i> Resumes</div>
+                        <div class="info-value">@Model.Employee.Resumes.Count()</div>
+                    </div>
                 }
                 else if (Model.UserType == "Employer" && Model.Employer != null)
                 {
@@ -411,10 +445,37 @@
                         </div>
                         <div class="info-value">@Model.Employer.Name</div>
                     </div>
-                }
-                
 
-                
+                    <div class="info-item delay-2">
+                        <div class="info-label"><i class="fas fa-envelope-open"></i> Email</div>
+                        <div class="info-value">@Model.Employer.Email</div>
+                    </div>
+
+                    <div class="info-item delay-2">
+                        <div class="info-label">
+                            <i class="fas fa-phone-alt"></i> Phone Number
+                        </div>
+                        <div class="info-value">@Model.Employer.PhoneNumber</div>
+                    </div>
+
+                    <div class="info-item delay-2">
+                        <div class="info-label"><i class="fas fa-briefcase"></i> Job Listings</div>
+                        <div class="info-value">@Model.Employer.Jobs?.Count()  </div>
+                    </div>
+
+                    <div class="info-item delay-2">
+                        <div class="info-label"><i class="fas fa-newspaper"></i> Posts</div>
+                        <div class="info-value">@Model.Employer.Posts?.Count()  0</div>
+                    </div>
+
+                    <div class="info-item delay-2">
+                        <div class="info-label"><i class="fas fa-file-alt"></i> Resumes Received</div>
+                        <div class="info-value">@Model.Employer.Resume?.Count()  </div>
+                    </div>
+                }
+
+
+
             </div>
 
             <h2 class="section-title delay-2">Account Actions</h2>
