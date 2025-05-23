@@ -1,0 +1,112 @@
+﻿@{
+    ViewData["Title"] = "Upload CV";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+    <style>
+        :root {
+            --primary-color: #047123;
+            --primary-hover: #035a1c;
+            --glass-blur: 12px;
+            --glass-opacity: 0.25;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Raleway', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .glass-container {
+            background: rgba(255, 255, 255, var(--glass-opacity));
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .glass-container:hover {
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.25);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(4, 113, 35, 0.2);
+        }
+
+        .btn-outline-secondary {
+            border-radius: 12px;
+            font-weight: 600;
+            border: 2px solid #ced4da;
+            color: #495057;
+            background-color: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #f1f3f5;
+            color: #047123;
+            border-color: #047123;
+        }
+
+        h2 span {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .page-transition {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @@keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @@media (max-width: 768px) {
+            .glass-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+
+<br />
+<br />
+<br />
+<div class="container py-5 page-transition">
+    <div class="glass-container mx-auto" style="max-width: 600px;">
+        <h2 class="mb-4 text-center"><span>Upload</span> Your CV</h2>
+
+        <form method="post" enctype="multipart/form-data" asp-action="CompareCV">
+            <div class="form-group mb-4">
+                <label for="cvFile" class="form-label">Choose CV (PDF or DOCX)</label>
+                <input type="file" class="form-control" name="cvFile" id="cvFile" required />
+            </div>
+
+            <div class="form-group mb-4">
+                <label for="jobId" class="form-label">Enter Job ID</label>
+                <input type="number" class="form-control" name="jobId" id="jobId" required />
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Upload & Compare</button>
+        </form>
+    </div>
+</div>

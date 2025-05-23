@@ -12,8 +12,8 @@ using Onlink.Data;
 namespace Onlink.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250516114640_m2")]
-    partial class m2
+    [Migration("20250523162425_h1")]
+    partial class h1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -198,6 +198,9 @@ namespace Onlink.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JobId"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("EmployerId")
                         .HasColumnType("int");
 
@@ -219,7 +222,7 @@ namespace Onlink.Migrations
 
                     b.HasIndex("EmployerId");
 
-                    b.ToTable("Job");
+                    b.ToTable("Jobs");
                 });
 
             modelBuilder.Entity("Onlink.Models.JobApplication", b =>
@@ -246,30 +249,6 @@ namespace Onlink.Migrations
                         .IsUnique();
 
                     b.ToTable("JobApplication");
-                });
-
-            modelBuilder.Entity("Onlink.Models.LoginViewModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("RememberMe")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("LoginViewModel");
                 });
 
             modelBuilder.Entity("Onlink.Models.Post", b =>
@@ -325,40 +304,31 @@ namespace Onlink.Migrations
                     b.ToTable("Post");
                 });
 
-            modelBuilder.Entity("Onlink.Models.RegisterViewModel", b =>
+            modelBuilder.Entity("Onlink.Models.PostLike", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("PostLikeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PostLikeId"));
 
-                    b.Property<string>("ConfrimPassword")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<DateTime>("LikedAt")
+                        .HasColumnType("datetime2");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("UserType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("PostLikeId");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.HasIndex("UserId");
 
-                    b.HasKey("Id");
+                    b.HasIndex("PostId", "UserId")
+                        .IsUnique();
 
-                    b.ToTable("RegisterViewModel");
+                    b.ToTable("PostLikes");
                 });
 
             modelBuilder.Entity("Onlink.Models.Resume", b =>
@@ -370,7 +340,6 @@ namespace Onlink.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Education")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -384,28 +353,23 @@ namespace Onlink.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Experience")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FullName")
                         .IsRequired()
-                        .HasMaxLength(3)
-                        .HasColumnType("nvarchar(3)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("LinkPath")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Skills")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Summary")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -437,11 +401,20 @@ namespace Onlink.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("FacebookUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GitHubUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProfilePicturePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TwitterUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
@@ -557,12 +530,12 @@ namespace Onlink.Migrations
                     b.HasOne("Onlink.Models.Employee", "Employee")
                         .WithMany("Posts")
                         .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Onlink.Models.Employer", "Employer")
                         .WithMany("Posts")
                         .HasForeignKey("EmployerId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Onlink.Models.Post", "ParentPost")
                         .WithMany("RelatedPosts")
@@ -574,6 +547,25 @@ namespace Onlink.Migrations
                     b.Navigation("Employer");
 
                     b.Navigation("ParentPost");
+                });
+
+            modelBuilder.Entity("Onlink.Models.PostLike", b =>
+                {
+                    b.HasOne("Onlink.Models.Post", "Post")
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Onlink.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Onlink.Models.Resume", b =>

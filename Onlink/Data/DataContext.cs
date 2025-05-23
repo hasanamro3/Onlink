@@ -16,7 +16,7 @@ namespace Onlink.Data
         public DbSet<Certificate> Certificate { get; set; }
         public DbSet<EmployeeJob> EmployeeJob { get; set; }
         public DbSet<PostLike> PostLikes { get; set; }
-
+        public DbSet<JobApplication> JobApplication { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Disable all cascading deletes

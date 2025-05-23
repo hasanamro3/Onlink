@@ -1,13 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Onlink.Data;
+using Onlink.ML;
+using Onlink.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // ✅ Database context
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext")
-    ?? throw new InvalidOperationException("Connection string 'DataContext' not found.")));
+        ?? throw new InvalidOperationException("Connection string 'DataContext' not found.")));
 
 // ✅ Add MVC services
 builder.Services.AddControllersWithViews();
@@ -26,8 +28,20 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 // ✅ Authorization services
 builder.Services.AddAuthorization();
-
+builder.Services.AddScoped<OpenAiService>();
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<DataContext>();
+    DbSeeder.Seed(db);
+}
+
+
+// ✅ إذا ما فيه نموذج، درب النموذج واحفظه
+if (!File.Exists("MLModel.zip"))
+{
+    MLTrainer.TrainAndSaveModel();
+}
 
 // ✅ Middleware pipeline
 if (!app.Environment.IsDevelopment())
@@ -38,14 +52,13 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 
-// ✅ Add these in correct order
-app.UseAuthentication(); // ← MUST come before UseAuthorization
+// ✅ Authentication/Authorization
+app.UseAuthentication();
 app.UseAuthorization();
 
-// ✅ Default routing
+// ✅ Default route
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Accounts}/{action=Login}/{id?}");

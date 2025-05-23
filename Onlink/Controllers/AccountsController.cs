@@ -73,13 +73,22 @@ public class AccountsController : Controller
         return RedirectToAction("Posts", "Dashboards");
     }
 
+
+    [HttpGet]
+    public IActionResult Logout()
+    {
+        return View(); // Return confirmation page
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Logout()
+    public async Task<IActionResult> ConfirmLogout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return RedirectToAction("Login");
     }
+
+
 
     [HttpGet]
     public async Task<IActionResult> Profile()
