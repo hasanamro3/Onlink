@@ -1,0 +1,84 @@
+﻿@model IEnumerable<Onlink.Models.Job>
+@{
+    ViewData["Title"] = "My Jobs";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>My Jobs - Onlink</title>
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --primary-color: #047123;
+            --glass-blur: 12px;
+            --glass-opacity: 0.22;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Raleway', sans-serif;
+            padding: 2rem;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, var(--glass-opacity));
+            backdrop-filter: blur(var(--glass-blur));
+            border-radius: 20px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 24px rgba(31, 38, 135, 0.15);
+        }
+
+        .job-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .meta {
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        .btn-edit {
+            background-color: var(--primary-color);
+            border: none;
+        }
+
+        .btn-edit:hover {
+            background-color: #035a1c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center mb-4" style="border-bottom: 3px solid var(--primary-color); display:inline-block;">My Posted Jobs</h2>
+
+        @if (!Model.Any())
+        {
+            <p class="text-muted text-center">You haven't posted any jobs yet.</p>
+        }
+
+        @foreach (var job in Model)
+        {
+            <div class="glass-card">
+                <div class="job-title">@job.JobName</div>
+                <div class="meta mb-2">
+                    <strong>Salary:</strong> $@job.JobSalary<br />
+                    <strong>Due Date:</strong> @job.SubmitSessionDueDate.ToShortDateString()
+                </div>
+                <p>@job.JobDescription</p>
+
+                <a asp-controller="Dashboards" asp-action="EditJob" asp-route-id="@job.JobId" class="btn btn-edit btn-sm text-white">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+            </div>
+        }
+    </div>
+</body>
+</html>

@@ -12,8 +12,8 @@ using Onlink.Data;
 namespace Onlink.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250523162425_h1")]
-    partial class h1
+    [Migration("20250525175947_m1")]
+    partial class m1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -1,0 +1,113 @@
+﻿@model Onlink.Models.Job
+@{
+    ViewData["Title"] = "Edit Job";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Onlink</title>
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --primary-color: #047123;
+            --primary-dark: #035a1c;
+            --glass-blur: 12px;
+            --glass-opacity: 0.22;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Raleway', sans-serif;
+            padding: 2rem;
+        }
+
+        .glass-form {
+            background: rgba(255, 255, 255, var(--glass-opacity));
+            backdrop-filter: blur(var(--glass-blur));
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 24px rgba(31, 38, 135, 0.15);
+            padding: 2rem 3rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        h2.section-title {
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            border-bottom: 3px solid var(--primary-color);
+            display: inline-block;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-danger {
+            background: #e74a3b;
+            border: none;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="glass-form">
+        <h2 class="section-title">Edit Job</h2>
+
+        <form asp-action="EditJob" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="JobId" />
+
+            <div class="form-group mb-3">
+                <label asp-for="JobName"></label>
+                <input asp-for="JobName" class="form-control" />
+                <span asp-validation-for="JobName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="JobDescription"></label>
+                <textarea asp-for="JobDescription" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="JobDescription" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="JobSalary"></label>
+                <input asp-for="JobSalary" class="form-control" />
+                <span asp-validation-for="JobSalary" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-4">
+                <label asp-for="SubmitSessionDueDate"></label>
+                <input asp-for="SubmitSessionDueDate" class="form-control" type="date" />
+                <span asp-validation-for="SubmitSessionDueDate" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-primary">Update</button>
+                <a asp-action="Index" class="btn btn-danger">Cancel</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

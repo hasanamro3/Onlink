@@ -281,5 +281,76 @@ public async Task<IActionResult> LikePost(int id)
             return RedirectToAction(nameof(MyPosts));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> EditJob(int id)
+        {
+            // ✅ 1. Get current logged-in user ID
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // ✅ 2. Get the logged-in employer
+            var employer = await _context.Employer.FirstOrDefaultAsync(e => e.UserId == userId);
+            if (employer == null)
+                return Forbid(); // Not an employer
+
+            // ✅ 3. Find the job
+            var job = await _context.Jobs.FirstOrDefaultAsync(j => j.JobId == id);
+
+            if (job == null)
+                return NotFound();
+
+            // ✅ 4. Verify ownership
+            if (job.EmployerId != employer.EmployerId)
+                return Forbid(); // Trying to access someone else's job
+
+            return View(job);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditJob(Job job)
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var employer = await _context.Employer.FirstOrDefaultAsync(e => e.UserId == userId);
+            if (employer == null)
+                return Forbid();
+
+            var existing = await _context.Jobs.FindAsync(job.JobId);
+            if (existing == null)
+                return NotFound();
+
+            if (existing.EmployerId != employer.EmployerId)
+                return Forbid();
+
+            // ✅ Update allowed fields
+            existing.JobName = job.JobName;
+            existing.JobDescription = job.JobDescription;
+            existing.JobSalary = job.JobSalary;
+            existing.SubmitSessionDueDate = job.SubmitSessionDueDate;
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(MyJobs));
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> MyJobs()
+        {
+            // Get current logged-in user ID (replace with your auth logic)
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var employer = await _context.Employer.FirstOrDefaultAsync(e => e.UserId == userId);
+            if (employer == null)
+            {
+                return RedirectToAction("AccessDenied", "Accounts"); // Or show "Not authorized"
+            }
+
+            var jobs = await _context.Jobs
+                .Where(j => j.EmployerId == employer.EmployerId)
+                .OrderByDescending(j => j.CreatedAt)
+                .ToListAsync();
+
+            return View(jobs);
+        }
+
     }
 }
