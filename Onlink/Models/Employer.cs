@@ -17,6 +17,7 @@ namespace Onlink.Models
         [StringLength(15, MinimumLength = 10, ErrorMessage = "Phone Not Valid")]
         [Phone]
         public string? PhoneNumber { get; set; }
+        public string? CVPath { get; set; }
 
         public IEnumerable<Job>? Jobs { get; set; }
         public IEnumerable<Post>? Posts { get; set; }

@@ -1,7 +1,8 @@
 ﻿@model Onlink.Models.User
 @{
-    ViewData["Title"] = "Edit Profile";
-    Layout = "_Layout";
+    ViewData["Title"] = "Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Full explicit path
+    var userType = ViewData["UserType"]?.ToString();
 }
 
 <!DOCTYPE html>
@@ -9,30 +10,28 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Onlink</title>
+    <title>Edit Profile - Onlink</title>
     <link href="~/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600;700&display=swap" rel="stylesheet" />
-    <link rel="apple-touch-icon" sizes="57x57" href="/favicon.ico" style="border-radius:30px">
+    <style>
+        :root {
+            --primary-color: #047123;
+            --primary-dark: #035a1c;
+            --glass-blur: 12px;
+            --glass-opacity: 0.25;
+        }
 
-   <style>
-    :root {
-        --primary-color: #047123;
-        --primary-dark: #035a1c;
-        --glass-blur: 12px;
-        --glass-opacity: 0.25;
-    }
-
-    body {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        min-height: 100vh;
-        font-family: 'Raleway', sans-serif;
-        margin: 0;
-        padding: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Raleway', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
         .glass-container {
             background: rgba(255, 255, 255, var(--glass-opacity));
@@ -42,314 +41,221 @@
             border: 1px solid rgba(255, 255, 255, 0.18);
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
             padding: 2.5rem;
-            width: 840px; /* ← تم تعديل هذا السطر */
-            margin-right:100px;
+            width: 100%;
+            max-width: 1000px;
         }
 
-
-    .avatar-container {
-        position: relative;
-        width: fit-content;
-        margin: 0 auto 1.5rem;
-    }
-
-    .profile-avatar {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 4px solid var(--primary-color);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        cursor: pointer;
-        transition: transform 0.3s ease;
-    }
-
-    .profile-avatar:hover {
-        transform: scale(1.03);
-    }
-
-    .avatar-edit {
-        position: absolute;
-        bottom: 10px;
-        right: 10px;
-        background: var(--primary-color);
-        color: white;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px solid white;
-        opacity: 0;
-        transition: all 0.3s ease;
-    }
-
-    .avatar-container:hover .avatar-edit {
-        opacity: 1;
-        transform: translateY(-5px);
-    }
-
-    .form-control {
-        background: rgba(255, 255, 255, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: 12px;
-        padding: 12px 15px;
-        transition: all 0.3s ease;
-    }
-
-    .form-control:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 0.25rem rgba(4, 113, 35, 0.15);
-        background: rgba(255, 255, 255, 0.9);
-    }
-
-    .btn-glass {
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(4, 113, 35, 0.4);
-        border-radius: 12px;
-        padding: 0.8rem 1.8rem;
-        color: var(--primary-color);
-        font-weight: 600;
-        text-transform: uppercase;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-        width: 100%;
-        margin-bottom: 0.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .btn-glass:hover {
-        background: rgba(255, 255, 255, 0.8);
-        color: var(--primary-dark);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(4, 113, 35, 0.15);
-    }
-
-    .btn-glass i {
-        margin-right: 0.5rem;
-    }
-
-    .text-danger {
-        color: #ef4444;
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
-    }
-
-    .page-transition {
-        animation: fadeIn 0.5s ease;
-    }
-
-    @@keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    @@media (max-width: 768px) {
-        .glass-container {
-            padding: 1.5rem;
-            margin: 1rem;
+        .avatar-container {
+            text-align: center;
+            margin-bottom: 2rem;
         }
 
         .profile-avatar {
-            width: 120px;
-            height: 120px;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 4px solid var(--primary-color);
+            object-fit: cover;
         }
-    }
-</style>
 
+        .avatar-edit {
+            margin-top: 0.5rem;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .form-label {
+            font-weight: 600;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-glass {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(4, 113, 35, 0.4);
+            border-radius: 12px;
+            padding: 0.8rem 1.8rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+            .btn-glass:hover {
+                background: rgba(255, 255, 255, 0.85);
+                color: var(--primary-dark);
+            }
+    </style>
 </head>
 <body class="page-transition">
     <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <div class="glass-container">
-                    <h2 class="text-center mb-4">
-                        <span style="border-bottom: 3px solid var(--primary-color); padding-bottom: 0.25rem;">Edit Profile</span>
-                    </h2>
+        <div class="glass-container mx-auto" style="max-width: 900px;">
+            <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
 
-                    <form asp-action="Edit" method="post" enctype="multipart/form-data" class="row">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" asp-for="UserId" />
-
-                        <!-- Left Column - Avatar -->
-                        <div class="col-md-4 mb-4 mb-md-0">
-                            <div class="text-center">
-                                <div class="avatar-container">
-                                    <label for="avatarUpload" style="cursor: pointer; display: block;">
-                                        <img src="@(!string.IsNullOrEmpty(Model.ProfilePicturePath) ? Url.Content(Model.ProfilePicturePath) : Url.Content("~/images/default-user.png"))"
-                                             class="profile-avatar"
-                                             alt="Profile Picture" id="avatarPreview" />
-                                        <div class="avatar-edit">
-                                            <i class="fas fa-camera"></i>
-                                        </div>
-                                    </label>
-                                    <input type="file" id="avatarUpload" name="ProfilePictureFile" accept=".png,.jpg,.jpeg" style="display: none;" />
-                                </div>
-                                <small class="text-muted d-block mt-2">Click on profile picture to change</small>
-
-                                <div class="mt-4">
-                                    <a asp-controller="Accounts" asp-action="ChangePassword" class="btn-glass">
-                                        <i class="fas fa-key"></i> Change Password
-                                    </a>
-                                    <a asp-action="Profile" class="btn-glass">
-                                        <i class="fas fa-times"></i> Cancel
-                                    </a>
-                                </div>
+                <!-- Profile Picture -->
+                <div class="text-center mb-4">
+                    <div class="avatar-container mx-auto">
+                        <label for="avatarUpload" style="cursor: pointer;">
+                            <img id="avatarPreview" src="@(!string.IsNullOrEmpty(Model.ProfilePicturePath) ? Url.Content(Model.ProfilePicturePath) : Url.Content("~/images/default-user.png"))" class="profile-avatar" />
+                            <div class="avatar-edit">
+                                <i class="fas fa-camera"></i>
                             </div>
-                        </div>
-
-                        <!-- Right Column - Form Fields -->
-                        <div class="col-md-8">
-                            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-                            <div class="mb-4">
-                                <label class="form-label">Username</label>
-                                <input asp-for="UserName" class="form-control" placeholder="Username" />
-                                <span asp-validation-for="UserName" class="text-danger"></span>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label">Email</label>
-                                <input asp-for="Email" type="email" class="form-control" placeholder="Email" />
-                                <span asp-validation-for="Email" class="text-danger"></span>
-                            </div>
-
-
-                            @if (Model.UserType == "Employee" && Model.Employee != null)
-                            {
-                                <input type="hidden" name="Employee.EmployeeId" value="@Model.Employee.EmployeeId" />
-                                <div class="mb-4">
-                                    <label class="form-label">First Name</label>
-                                    <input name="Employee.FirstName" value="@Model.Employee.FirstName" class="form-control" placeholder="First Name" />
-                                    <span asp-validation-for="Employee.FirstName" class="text-danger"></span>
-                                </div>
-                                <div class="mb-4">
-                                    <label class="form-label">Last Name</label>
-                                    <input name="Employee.LastName" value="@Model.Employee.LastName" class="form-control" placeholder="Last Name" />
-                                    <span asp-validation-for="Employee.LastName" class="text-danger"></span>
-                                </div>
-                                <div class="mb-4">
-                                    <label class="form-label">Phone Number</label>
-                                    <input type="tel"
-                                           name="Employer.PhoneNumber"
-                                           value="@Model.Employee.PhoneNumber"
-                                           class="form-control"
-                                           placeholder="e.g. +962779545697"
-                                           
-                                           maxlength="14"
-                                           required />
-                                    <span asp-validation-for="Employee.PhoneNumber" class="text-danger"></span>
-                                </div>
-
-                            }
-                            else if (Model.UserType == "Employer" && Model.Employer != null)
-                            {
-                                <input type="hidden" name="Employer.EmployerId" value="@Model.Employer.EmployerId" />
-                                <div class="mb-4">
-                                    <label class="form-label">Employer Name</label>
-                                    <input name="Employer.Name" value="@Model.Employer.Name" class="form-control" placeholder="Employer Name" />
-                                    <span asp-validation-for="Employer.Name" class="text-danger"></span>
-                                </div>
-
-                                <div class="mb-4">
-                                    <label class="form-label">Phone Number</label>
-                                    <input type="tel"
-                                           name="Employer.PhoneNumber"
-                                           value="@Model.Employer.PhoneNumber"
-                                           class="form-control"
-                                           placeholder="e.g. +962779545697"
-                                          
-                                           maxlength="14"
-                                           required />
-                                    <span asp-validation-for="Employer.PhoneNumber" class="text-danger"></span>
-                                </div>
-                            }
-
-                            <div class="col-md-8">
-                                <div class="mb-3">
-                                    <label asp-for="FacebookUrl" class="form-label">Facebook URL</label>
-                                    <input asp-for="FacebookUrl" class="form-control" placeholder="https://facebook.com/yourprofile" />
-                                    <span asp-validation-for="FacebookUrl" class="text-danger"></span>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label asp-for="TwitterUrl" class="form-label">Twitter URL</label>
-                                    <input asp-for="TwitterUrl" class="form-control" placeholder="https://twitter.com/yourprofile" />
-                                    <span asp-validation-for="TwitterUrl" class="text-danger"></span>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label asp-for="GitHubUrl" class="form-label">GitHub URL</label>
-                                    <input asp-for="GitHubUrl" class="form-control" placeholder="https://github.com/yourusername" />
-                                    <span asp-validation-for="GitHubUrl" class="text-danger"></span>
-                                </div>
-                            </div>
-
-
-                            <div class="d-grid mt-4">
-                                <button type="submit" class="btn-glass">
-                                    <i class="fas fa-save"></i> Save Changes
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                        </label>
+                        <input type="file" id="avatarUpload" name="ProfilePictureFile" accept=".png,.jpg,.jpeg" style="display:none;" />
+                        <small class="text-muted d-block mt-2">Click the image to change your photo</small>
+                    </div>
                 </div>
-            </div>
+
+                <!-- Two Columns Grid -->
+                <div class="row">
+                    <!-- Column 1 -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input asp-for="UserName" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input asp-for="Email" type="email" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="FacebookUrl" class="form-label">Facebook</label>
+                            <input asp-for="FacebookUrl" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="TwitterUrl" class="form-label">Twitter</label>
+                            <input asp-for="TwitterUrl" class="form-control" />
+                        </div>
+                    </div>
+
+                    <!-- Column 2 -->
+                    <div class="col-md-6">
+                        @if (Model.UserType == "Employee" && Model.Employee != null)
+                        {
+                            <div class="mb-3">
+                                <label class="form-label">First Name</label>
+                                <input name="Employee.FirstName" value="@Model.Employee.FirstName" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Last Name</label>
+                                <input name="Employee.LastName" value="@Model.Employee.LastName" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Phone</label>
+                                <input name="Employee.PhoneNumber" value="@Model.Employee.PhoneNumber" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Upload CV</label>
+                                <input type="file" name="EmployeeCv" class="form-control" accept=".pdf,.doc,.docx" />
+                                <small class="text-muted">Accepted formats: PDF, DOC, DOCX</small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Upload Certificate</label>
+                                <input type="file" name="EmployeeCertificate" class="form-control" accept=".pdf,.jpg,.png" />
+                                <small class="text-muted">Upload a scanned certificate or PDF</small>
+                            </div>
+                        }
+                        else if (Model.UserType == "Employer" && Model.Employer != null)
+                        {
+                            <div class="mb-3">
+                                <label class="form-label">Employer Name</label>
+                                <input name="Employer.Name" value="@Model.Employer.Name" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Phone</label>
+                                <input name="Employer.PhoneNumber" value="@Model.Employer.PhoneNumber" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Upload CV</label>
+                                <input  type="file" name="EmployerCv" class="form-control" accept=".pdf,.doc,.docx" />
+                              
+                            </div>
+                        }
+
+                        <div class="mb-3">
+                            <label asp-for="GitHubUrl" class="form-label">GitHub</label>
+                            <input asp-for="GitHubUrl" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-flex justify-content-end gap-3 mt-4">
+                    <a asp-action="Profile" class="btn-glass-cancel">
+                        <i class="fas fa-times me-1"></i> Cancel
+                    </a>  
+                    <button type="submit" class="btn-glass-submit">
+                        <i class="fas fa-save me-1"></i> Save
+                    </button>
+                    
+                </div>
+                <style>
+                    .btn-glass-submit,
+                    .btn-glass-cancel {
+                        padding: 0.65rem 1.4rem;
+                        font-weight: 600;
+                        border-radius: 12px;
+                        border: none;
+                        transition: all 0.3s ease;
+                        text-decoration: none;
+                        display: inline-flex;
+                        align-items: center;
+                        font-size: 0.95rem;
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                        margin-right:20px;
+                    }
+
+                    .btn-glass-submit {
+                        background-color: rgba(4, 113, 35, 0.1);
+                        color: #047123;
+                        border: 1px solid rgba(4, 113, 35, 0.3);
+                        margin-right: 20px;
+                    }
+
+                        .btn-glass-submit:hover {
+                            background-color: rgba(4, 113, 35, 0.2);
+                            color: #035a1c;
+                            transform: translateY(-2px);
+                            box-shadow: 0 6px 16px rgba(4, 113, 35, 0.15);
+                        }
+
+                    .btn-glass-cancel {
+                        background-color: rgba(200, 0, 0, 0.05);
+                        color: #aa2e2e;
+                        border: 1px solid rgba(200, 0, 0, 0.2);
+                    }
+
+                        .btn-glass-cancel:hover {
+                            background-color: rgba(200, 0, 0, 0.1);
+                            color: #891e1e;
+                            transform: translateY(-2px);
+                            box-shadow: 0 6px 16px rgba(200, 0, 0, 0.15);
+                        }
+
+                </style>
+            </form>
         </div>
     </div>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const avatarUpload = document.getElementById('avatarUpload');
-            const avatarPreview = document.getElementById('avatarPreview');
-
-            if (avatarUpload && avatarPreview) {
-                avatarUpload.addEventListener('change', function (e) {
-                    const file = e.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            avatarPreview.src = e.target.result;
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
-
-                avatarPreview.addEventListener('click', function () {
-                    avatarUpload.click();
-                });
+        const avatarUpload = document.getElementById('avatarUpload');
+        const avatarPreview = document.getElementById('avatarPreview');
+        avatarUpload?.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    avatarPreview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
             }
-
-            document.querySelector('form').addEventListener('submit', function (e) {
-                e.preventDefault();
-                document.body.style.opacity = '0';
-                document.body.style.transform = 'translateY(10px)';
-                setTimeout(() => this.submit(), 500);
-            });
         });
     </script>
-    <script>
-        const phoneInput = document.querySelector('input[name="Employer.PhoneNumber"]');
-        phoneInput.addEventListener('input', function () {
-            this.value = this.value.replace(/[^+\d]/g, ''); // Only + and digits
-        });
-    </script>
-
 </body>
+
 </html>
