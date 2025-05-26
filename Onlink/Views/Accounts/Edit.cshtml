@@ -240,6 +240,11 @@
                                     <span asp-validation-for="Employee.LastName" class="text-danger"></span>
                                 </div>
                                 <div class="mb-4">
+                                    <label class="form-label">Bio</label>
+                                    <input name="Employee.Bio" value="@Model.Employee.Bio" class="form-control" placeholder="Bio" />
+                                    <span asp-validation-for="Employee.Bio" class="text-danger"></span>
+                                </div>
+                                <div class="mb-4">
                                     <label class="form-label">Phone Number</label>
                                     <input type="tel"
                                            name="Employer.PhoneNumber"

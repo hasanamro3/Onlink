@@ -165,6 +165,12 @@
                         </a>
                     </li>
                 }
+
+                @if (userType == "Employee"){
+                    <a asp-controller="CV" asp-action="SuggestedJobs" class="nav-link">
+                        <i class="fas fa-star"></i> Suggested Jobs
+                    </a>
+                }
                 <li>
                     <a asp-controller="Dashboards" asp-action="Jobs">
                         <i class="bi bi-collection"></i> View Jobs

@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using Onlink.ML;
 using Onlink.Services;
 using UglyToad.PdfPig;
+using System.Security.Claims;
 
 namespace Onlink.Controllers
 {
@@ -175,6 +176,54 @@ namespace Onlink.Controllers
 
             ViewBag.AIResponse = result;
             return View("AIResult");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SuggestedJobs()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            var userType = User.FindFirst("UserType")?.Value;
+
+            if (userIdClaim == null || userType != "Employee")
+            {
+                return RedirectToAction("AccessDenied", "Accounts"); // Or Forbid()
+            }
+
+            int userId = int.Parse(userIdClaim.Value);
+
+            var employee = await _db.Employee
+                .Include(e => e.User)
+                .FirstOrDefaultAsync(e => e.UserId == userId);
+
+            if (employee == null)
+            {
+                return RedirectToAction("AccessDenied", "Accounts");
+            }
+
+            var resume = await _db.Resume.FirstOrDefaultAsync(r => r.EmployeeId == employee.EmployeeId);
+            if (resume == null)
+            {
+                ViewBag.Message = "You need to upload a resume first.";
+                return View("SuggestedJobs", new List<(Job, double)>());
+            }
+
+            string resumeText = $"{resume.Summary} {resume.Experience} {resume.Education} {resume.Skills}";
+
+            var jobs = await _db.Jobs.ToListAsync();
+            var results = new List<(Job job, double score)>();
+
+            foreach (var job in jobs)
+            {
+                string jobText = $"{job.JobName} {job.JobDescription}";
+                double score = CVController.CalculateSimilarity(resumeText, jobText);
+
+                if (score > 0.2) // Adjust threshold as needed
+                {
+                    results.Add((job, Math.Round(score * 100, 2)));
+                }
+            }
+
+            return View("SuggestedJobs", results.OrderByDescending(r => r.score).ToList());
         }
     }
 }
